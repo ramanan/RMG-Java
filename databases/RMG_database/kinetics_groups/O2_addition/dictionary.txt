@@ -1,0 +1,9 @@
+// "Reaction Family"
+
+R_rad
+1 *1 C 1
+
+
+O2d
+1 *2 O 0 {2,D}
+2 *3 O 0 {1,D}
