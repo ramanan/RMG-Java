@@ -2,8 +2,8 @@
 //
 // REACTION FAMILIES USED BY RMG
 //
-// Created 2 Jun 2010 by Amrit Jalan (amrit@mit.edu)
-// Combines RMG rate rules with those of Pfaendtner and Broadbelt for liquid phase oxidation//
+// Created 1 Jun 2009 by Josh Allen (jwallen@mit.edu)
+//
 // Notes:
 //
 // The name of each forward reaction should match up with a folder
@@ -17,7 +17,7 @@
 // No.  on/off  Forward reaction                     
 1       on      Cyclic_Ether_Formation
 2       on      intra_OH_migration
-3       off      H_Abstraction
+3       on      H_Abstraction
 4       on      R_Addition_MultipleBond
 5       on      R_Recombination
 6       on      Disproportionation
@@ -38,18 +38,3 @@
 21      on      Intra_R_Add_Exocyclic
 22      on      Intra_R_Add_Endocyclic
 23      on      1,2-Birad_to_alkene
-24       off      alkoxy_beta_scission
-25       off      baeyer_villiger_reaction
-26       off      beta_scission
-27      off      bond_fission
-28      off      disproportionation_PB
-29      on      H_transfer_1
-30      on     H_transfer_3
-31      on     H_transfer_4
-32      on     H_transfer_5
-33      on      H_transfer_6
-34      on      hydroperoxide_decomposition
-35      off     O2_addition
-36      off     primary_initiation
-37      off     recombination
-38      on     H_transfer_2

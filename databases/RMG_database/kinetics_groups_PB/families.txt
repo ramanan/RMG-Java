@@ -1,0 +1,32 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+// REACTION FAMILIES USED BY RMG
+//
+// Created 1 Jun 2009 by Josh Allen (jwallen@mit.edu)
+//
+// Notes:
+//
+// The name of each forward reaction should match up with a folder
+// in this directory containing the dictionary, tree, library, and adjusts
+// for that family.
+//
+// Families can be deactivated by simply changing the "on/off" column to off.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+// No.  on/off  Forward reaction                     
+1       on      alkoxy_beta_scission
+2       on      baeyer_villiger_reaction
+3       on      beta_scission
+4       on      bond_fission
+5       on      disproportionation
+6       on      H_transfer_1
+7       on      H_transfer_3
+8       on      H_transfer_4
+9       on      H_transfer_5
+10      on      H_transfer_6
+11      on      hydroperoxide_decomposition
+12      on      O2_addition
+13      on      primary_initiation
+14      on      recombination
+15      on      H_transfer_2

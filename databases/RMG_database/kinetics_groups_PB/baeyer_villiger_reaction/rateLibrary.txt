@@ -1,0 +1,7 @@
+// "PB Baeyer Villiger reaction Reference: Ind. Eng. Chem. Res., Vol. 47, No.9, 2008"
+
+// jing, define key word for format of the rate: either Arrhenius or Arrhenius_EP
+Arrhenius_EP
+
+//No.	RCOH	RCOOOH	Temp.		A	n	a	E0	DA	Dn	Da	DE0	Rank
+1	RCOH	RCOOOH	300-1500	1.2e7	0.0	0.0 8.5	0.0	0.0	0.0	0.0	5
