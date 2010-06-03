@@ -528,6 +528,8 @@ public class Reaction {
 
       if (!getStructure().equals(r.getStructure())) return false;
 
+      if (!r.getReactionTemplate().name.equals(this.getReactionTemplate().name)) return false;
+
       return true;
 
 
