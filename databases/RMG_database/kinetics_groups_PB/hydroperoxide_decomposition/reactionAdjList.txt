@@ -1,0 +1,34 @@
+////////////////////////////////////////////////////////////
+//                                                        //
+// The reaction adjacency list defining the reaction type //
+//  for "Hydroperoxide decomposition" reaction family                     //
+//                                                        //
+// Amrit Jalan & Michael Harper                           //
+//  8-Jun-2009                                            //
+//                                                        //
+////////////////////////////////////////////////////////////
+
+
+// "Hydroperoxide decomposition"
+
+R1-H + R2-OOH -> R1_rad + R2-O + H2O
+
+// Recipe:
+//  *1 = R1, *2 = H, *3 = O (bound to R2), *4 = O
+//	- A single bond is broken between R1 and H (Action 1)
+//	- The R1 atom's radical count is increased by 1 (Action 2)
+//	- A single bond between the two oxygens is broken (Action 3)
+//	- The oxygen bound to R2 has radical count increased by 1 (Action 4)
+//	- The hydrogen atom and hydroxyl radical form H2O (Action 5)
+
+forward
+reverse: none
+
+Actions 1
+(1) BREAK_BOND	{*1,S,*2}
+(2) GAIN_RADICAL	{*1,1}
+(3) BREAK_BOND	{*3,S,*4}
+(4) GAIN_RADICAL	{*3,1}
+(5) FORM_BOND	{*2,S,*4}
+
+

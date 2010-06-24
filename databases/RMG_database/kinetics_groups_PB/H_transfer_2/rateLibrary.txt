@@ -1,0 +1,7 @@
+// "PB "H-Transfer 2" Reference: Ind. Eng. Chem. Res., Vol. 47, No.9, 2008"
+
+// jing, define key word for format of the rate: either Arrhenius or Arrhenius_EP
+Arrhenius_EP
+
+//No.	ROO_rad	RH	Temp.		A	n	a	E0	DA	Dn	Da	DE0	Rank
+1	ROO_rad	RH	300-1500	1.0e10	0.0	1.1 3.05	0.0	0.0	0.0	0.0	5

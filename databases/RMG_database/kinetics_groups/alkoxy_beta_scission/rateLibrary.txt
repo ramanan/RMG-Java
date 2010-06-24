@@ -1,0 +1,7 @@
+// "PB Primary Initiation Reference: Ind. Eng. Chem. Res., Vol. 47, No.9, 2008"
+
+// jing, define key word for format of the rate: either Arrhenius or Arrhenius_EP
+Arrhenius_EP
+
+//No.	RO_rad	Temp.	A	n	a	E0	DA	Dn	Da	DE0	Rank
+1	RO_rad 300-1500	1.0e14	0.0	0.85 9.5 0.0 0.0 0.0 0.0 5

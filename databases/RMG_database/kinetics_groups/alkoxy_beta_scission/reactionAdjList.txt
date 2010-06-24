@@ -1,0 +1,32 @@
+////////////////////////////////////////////////////////////
+//                                                        //
+// The reaction adjacency list defining the reaction type //
+//  for "Alkoxy beta scission" reaction family                     //
+//                                                        //
+// Amrit Jalan & Michael Harper                           //
+//  1-Jun-2009                                            //
+//                                                        //
+////////////////////////////////////////////////////////////
+
+
+// "Alkoxy beta scission"
+
+RO_rad -> R'CHO + R"_rad
+
+// Recipe:
+//  *1 = R1, *2 = H, *3 = O (bound to R2), *4 = O
+//	- A single bond is broken between R1 and H (Action 1)
+//	- The R1 atom's radical count is increased by 1 (Action 2)
+//	- A single bond between the two oxygens is broken (Action 3)
+//	- The oxygen bound to R2 has radical count increased by 1 (Action 4)
+//	- The hydrogen atom and hydroxyl radical form H2O (Action 5)
+
+forward
+reverse: none
+
+Actions 1
+(1) BREAK_BOND		{*2,S,*4}
+(2) CHANGE_BOND	    {*2,1,*5}
+(3) GAIN_RADICAL	{*4,1}
+(4) LOSE_RADICAL 	{*5,1}
+

@@ -1,0 +1,7 @@
+// "PB "Peroxy disproportionation" Reference: Ind. Eng. Chem. Res., Vol. 47, No.9, 2008"
+
+// jing, define key word for format of the rate: either Arrhenius or Arrhenius_EP
+Arrhenius_EP
+
+//No.	R1HOO_rad	R200_rad	Temp.		A	n	a	E0	DA	Dn	Da	DE0	Rank
+1	R1HOO_rad	R200_rad	300-1500	1.0e9	0.0	0.0 0.0 0.0	0.0	0.0	0.0	5

@@ -1,0 +1,8 @@
+// "Reaction Family"
+
+// jing, define key word for format of the rate: either Arrhenius or Arrhenius_EP
+Arrhenius_EP
+
+//No.	R1-H	R2-OOH	Temp.		A	n	a	E0	DA	Dn	Da	DE0	Rank
+// #1 Completely made up by MRH on 1-Jun-2009 as test case
+1	R1-H	R2-OOH	300-1500	1.0e9	0.0	-0.09 24.6	0.0	0.0	0.0	0.0	5

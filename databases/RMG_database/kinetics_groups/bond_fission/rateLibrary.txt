@@ -1,0 +1,7 @@
+// "PB Bond Fission Reference: Ind. Eng. Chem. Res., Vol. 47, No.9, 2008"
+
+// jing, define key word for format of the rate: either Arrhenius or Arrhenius_EP
+Arrhenius_EP
+
+//No.	RH	Temp.		A	n	a	E0	DA	Dn	Da	DE0	Rank
+1	ROOH	300-1500	1.0e15	0.0	1.0 0	0.0	0.0	0.0	0.0	5
