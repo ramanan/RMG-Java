@@ -67,7 +67,8 @@ public class ReactionModelGenerator {
     protected LinkedList initialStatusList; //10/23/07 gmagoon: changed from initialStatus to initialStatusList
     protected double rtol;//svp
     protected static double atol;
-    protected PrimaryReactionLibrary primaryReactionLibrary;//9/24/07 gmagoon
+    protected PrimaryKineticLibrary primaryKineticLibrary;//9/24/07 gmagoon
+    protected ReactionLibrary ReactionLibrary;
     protected ReactionModelEnlarger reactionModelEnlarger;//9/24/07 gmagoon
     protected LinkedHashSet speciesSeed;//9/24/07 gmagoon;
     protected ReactionGenerator reactionGenerator;//9/24/07 gmagoon
@@ -91,7 +92,7 @@ public class ReactionModelGenerator {
     // 24Jun2009 MRH: variable stores the first temperature encountered in the condition.txt file
     //	This temperature is used to select the "best" kinetics from the rxn library
     protected static Temperature temp4BestKinetics; 
-    // This is the new "PrimaryReactionLibrary"
+    
     protected SeedMechanism seedMechanism = null;
     protected PrimaryThermoLibrary primaryThermoLibrary;
     protected PrimaryTransportLibrary primaryTransportLibrary;
@@ -147,8 +148,8 @@ public class ReactionModelGenerator {
         	FinishController finishController = null;
         	//DynamicSimulator dynamicSimulator = null;//10/27/07 gmagoon: commented out and replaced with following line
 			LinkedList dynamicSimulatorList = new LinkedList();
-        	//PrimaryReactionLibrary primaryReactionLibrary = null;//10/14/07 gmagoon: see below
-			setPrimaryReactionLibrary(null);//10/14/07 gmagoon: changed to use setPrimaryReactionLibrary
+        	
+			setPrimaryKineticLibrary(null);//10/14/07 gmagoon: changed to use setPrimaryReactionLibrary
         	double [] conversionSet = new double[50];
 			String line = ChemParser.readMeaningfulLine(reader);
         	/*if (line.startsWith("Restart")){
@@ -290,6 +291,7 @@ public class ReactionModelGenerator {
 				if (tempString.toLowerCase().equals("yes")) {
 					readrestart = true;
 					readRestartSpecies();
+		    		readRestartReactions();
 				} else readrestart = false;				
 				line = ChemParser.readMeaningfulLine(reader);
 			} else throw new InvalidSymbolException("Cannot locate ReadRestart field");
@@ -661,6 +663,8 @@ public class ReactionModelGenerator {
 			else
 				throw new InvalidSymbolException("condition.txt: can't find PressureDependence flag!");
 			
+        	if (readrestart) if (PDepNetwork.generateNetworks) readPDepNetworks();
+        	
         	// include species (optional)
         	/*
         	 * 
@@ -816,6 +820,10 @@ public class ReactionModelGenerator {
 
 			//
 			if (temp.startsWith("AUTOPRUNE")){//for the AUTOPRUNE case, read in additional lines for termTol and edgeTol
+			    if(reactionModelEnlarger instanceof RateBasedPDepRME){
+				System.out.println("Use of pruning with pressure-dependence is not supported. Turn off pruning and/or pressure-dependence options in condition file.");
+				System.exit(0);
+			    }
 			    line = ChemParser.readMeaningfulLine(reader);
 			    if (line.startsWith("TerminationTolerance:")) {
 				    st = new StringTokenizer(line);
@@ -1009,20 +1017,28 @@ public class ReactionModelGenerator {
 			
         	// read in reaction model enlarger
 			
-        	/* Read in the Primary Reaction Library
-        	 *  The user can specify as many PRLs,
+        	/* Read in the Primary Kinetic Library
+        	 *  The user can specify as many PKLs,
         	 * 	including none, as they like.
         	 */        	
         	line = ChemParser.readMeaningfulLine(reader);
-			if (line.startsWith("PrimaryReactionLibrary:")) {
-				readAndMakePRL(reader);
-			} else throw new InvalidSymbolException("condition.txt: can't find PrimaryReactionLibrary");
+			if (line.startsWith("PrimaryKineticLibrary:")) {
+				readAndMakePKL(reader);
+			} else throw new InvalidSymbolException("condition.txt: can't find PrimaryKineticLibrary");
+			
+			// Reaction Library 
+			line = ChemParser.readMeaningfulLine(reader);
+			if (line.startsWith("ReactionLibrary:")) {
+				readAndMakeReactionLibrary(reader);
+			} else throw new InvalidSymbolException("condition.txt: can't find ReactionLibrary");
+			
+			
 			
 			/*
 			 * Added by MRH 12-Jun-2009
 			 * 
 			 * The SeedMechanism acts almost exactly as the old
-			 * 	PrimaryReactionLibrary did.  Whatever is in the SeedMechanism
+			 * 	PrimaryKineticLibrary did.  Whatever is in the SeedMechanism
 			 * 	will be placed in the core at the beginning of the simulation.
 			 * 	The user can specify as many seed mechanisms as they like, with
 			 * 	the priority (in the case of duplicates) given to the first
@@ -1145,7 +1161,7 @@ public class ReactionModelGenerator {
 			
         	in.close();
 			
-			//11/6/07 gmagoon: initializing temperatureArray and pressureArray before libraryReactionGenerator is initialized (initialization calls PDepNetwork and performs initializekLeak); UPDATE: moved after initialStatusList initialization (in case primaryReactionLibrary calls the similar pdep functions
+			//11/6/07 gmagoon: initializing temperatureArray and pressureArray before libraryReactionGenerator is initialized (initialization calls PDepNetwork and performs initializekLeak); UPDATE: moved after initialStatusList initialization (in case primaryKineticLibrary calls the similar pdep functions
 			//                LinkedList temperatureArray = new LinkedList();
 			//                LinkedList pressureArray = new LinkedList();
 			//                Iterator iterIS = initialStatusList.iterator();
@@ -1182,8 +1198,8 @@ public class ReactionModelGenerator {
         		setTemp4BestKinetics(t);
         		break;
         	}
-			setReactionGenerator(new TemplateReactionGenerator()); //11/4/07 gmagoon: moved from modelGeneration; mysteriously, moving this later moves "Father" lines up in output at runtime, immediately after condition file (as in original code); previously, these Father lines were just before "Can't read primary reaction library files!"
-			lrg = new LibraryReactionGenerator();//10/10/07 gmagoon: moved from modelGeneration (sequence lrg increases species id, and the different sequence was causing problems as main species id was 6 instead of 1); //10/31/07 gmagoon: restored this line from 10/10/07 backup: somehow it got lost along the way; 11/5/07 gmagoon: changed to use "lrg =" instead of setLibraryReactionGenerator
+			setReactionGenerator(new TemplateReactionGenerator()); //11/4/07 gmagoon: moved from modelGeneration; mysteriously, moving this later moves "Father" lines up in output at runtime, immediately after condition file (as in original code); previously, these Father lines were just before "Can't read primary kinetic library files!"
+			lrg = new LibraryReactionGenerator(ReactionLibrary);//10/10/07 gmagoon: moved from modelGeneration (sequence lrg increases species id, and the different sequence was causing problems as main species id was 6 instead of 1); //10/31/07 gmagoon: restored this line from 10/10/07 backup: somehow it got lost along the way; 11/5/07 gmagoon: changed to use "lrg =" instead of setLibraryReactionGenerator
 			//10/24/07 gmagoon: updated to use multiple reactionSystem variables
 			reactionSystemList = new LinkedList();
 			// LinkedList temperatureArray = new LinkedList();//10/30/07 gmagoon: added temperatureArray variable for passing to PDepNetwork; 11/6/07 gmagoon: moved before initialization of lrg;
@@ -1215,7 +1231,7 @@ public class ReactionModelGenerator {
 					
 					FinishController fc = new FinishController(finishController.getTerminationTester(), finishController.getValidityTester());//10/31/07 gmagoon: changed to create new finishController instance in each case (apparently, the finish controller becomes associated with reactionSystem in setFinishController within ReactionSystem); alteratively, could use clone, but might need to change FinishController to be "cloneable"
 					// FinishController fc = new FinishController(termTestCopy, finishController.getValidityTester());
-					reactionSystemList.add(new ReactionSystem(tm, pm, reactionModelEnlarger, fc, ds, getPrimaryReactionLibrary(), getReactionGenerator(), getSpeciesSeed(), is, getReactionModel(),lrg, i, equationOfState)); 
+					reactionSystemList.add(new ReactionSystem(tm, pm, reactionModelEnlarger, fc, ds, getPrimaryKineticLibrary(), getReactionGenerator(), getSpeciesSeed(), is, getReactionModel(),lrg, i, equationOfState)); 
 					i++;//10/30/07 gmagoon: added
 					System.out.println("Created reaction system "+i+"\n");
 				}
@@ -1361,9 +1377,7 @@ public class ReactionModelGenerator {
         writeDictionary(getReactionModel());
         //System.exit(0);
 		
-		System.out.println("The model core has " + ((CoreEdgeReactionModel)getReactionModel()).getReactedReactionSet().size() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getReactedSpeciesSet().size() + " species.");
-		System.out.println("The model edge has " + ((CoreEdgeReactionModel)getReactionModel()).getUnreactedReactionSet().size() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getUnreactedSpeciesSet().size() + " species.");
-		
+		printModelSize();
 		
 		StringBuilder print_info = Global.diagnosticInfo;
 		print_info.append("\nMolecule \t Flux\t\tTime\t \t\t \t Core \t \t Edge \t \t memory\n");
@@ -1398,8 +1412,9 @@ public class ReactionModelGenerator {
 				//prune the reaction model (this will only do something in the AUTO case)
 				pruneReactionModel();
 				garbageCollect();
-				//System.out.println("After pruning, the model core has " + ((CoreEdgeReactionModel)getReactionModel()).getReactedReactionSet().size() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getReactedSpeciesSet().size() + " species.");
-				//System.out.println("After pruning, the model edge has " + ((CoreEdgeReactionModel)getReactionModel()).getUnreactedReactionSet().size() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getUnreactedSpeciesSet().size() + " species.");
+				//System.out.println("After pruning:");
+				//printModelSize();
+
 				// ENLARGE THE MODEL!!! (this is where the good stuff happens)
 				enlargeReactionModel();
 				double totalEnlarger = (System.currentTimeMillis() - pt)/1000/60;
@@ -1518,28 +1533,7 @@ public class ReactionModelGenerator {
 				}
 				
 			    System.out.println("Running Time is: " + String.valueOf((System.currentTimeMillis()-tAtInitialization)/1000/60) + " minutes.");
-				System.out.println("The model edge has " + ((CoreEdgeReactionModel)getReactionModel()).getUnreactedReactionSet().size() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getUnreactedSpeciesSet().size() + " species.");
-				//10/24/07 gmagoon: note: all reaction systems should use the same core, but I will display for each reactionSystem for testing purposes:
-				for (Integer i = 0; i<reactionSystemList.size();i++) {
-					ReactionSystem rs = (ReactionSystem)reactionSystemList.get(i);
-					System.out.println("For reaction system: "+(i+1)+" out of "+reactionSystemList.size());
-					if (rs.getDynamicSimulator() instanceof JDASPK){
-						JDASPK solver = (JDASPK)rs.getDynamicSimulator();
-						System.out.println("The model core has " + solver.getReactionSize() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getReactedSpeciesSet().size() + " species.");
-					}
-					else{
-						JDASSL solver = (JDASSL)rs.getDynamicSimulator();
-						System.out.println("The model core has " + solver.getReactionSize() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getReactedSpeciesSet().size() + " species.");
-					}
-				}
-				// if (reactionSystem.getDynamicSimulator() instanceof JDASPK){
-				//	JDASPK solver = (JDASPK)reactionSystem.getDynamicSimulator();
-				//	System.out.println("The model core has " + solver.getReactionSize() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getReactedSpeciesSet().size() + " species.");
-				//}
-				//else{
-				//	JDASSL solver = (JDASSL)reactionSystem.getDynamicSimulator();
-				//	System.out.println("The model core has " + solver.getReactionSize() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getReactedSpeciesSet().size() + " species.");
-				//}
+				printModelSize();
 				
 				startTime = System.currentTimeMillis();
 				double mU = memoryUsed();
@@ -1698,29 +1692,8 @@ public class ReactionModelGenerator {
 				 System.out.print("Free memory: ");
 				 System.out.println(runTime.freeMemory());
 				 */
-				
-				//10/24/07 gmagoon: note: all reaction systems should use the same core, but I will display for each reactionSystem for testing purposes:
-        		for (Integer i = 0; i<reactionSystemList.size();i++) {
-        			ReactionSystem rs = (ReactionSystem)reactionSystemList.get(i);
-        			System.out.println("For reaction system: "+(i+1)+" out of "+reactionSystemList.size());
-        			if (rs.getDynamicSimulator() instanceof JDASPK){
-        				JDASPK solver = (JDASPK)rs.getDynamicSimulator();
-        				System.out.println("The model core has " + solver.getReactionSize() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getReactedSpeciesSet().size() + " species.");
-        			}
-        			else{
-        				JDASSL solver = (JDASSL)rs.getDynamicSimulator();
-        				System.out.println("The model core has " + solver.getReactionSize() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getReactedSpeciesSet().size() + " species.");
-                        System.out.println("(although rs.getReactionModel().getReactionNumber() returns "+rs.getReactionModel().getReactionNumber()+")");
-        			}
-        		}
-				//        		if (reactionSystem.getDynamicSimulator() instanceof JDASPK){
-				//					JDASPK solver = (JDASPK)reactionSystem.getDynamicSimulator();
-				//					System.out.println("The model core has " + solver.getReactionSize() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getReactedSpeciesSet().size() + " species.");
-				//        		}
-				//				else{
-				//					JDASSL solver = (JDASSL)reactionSystem.getDynamicSimulator();
-				//					System.out.println("The model core has " + solver.getReactionSize() + " reactions and "+ ((CoreEdgeReactionModel)getReactionModel()).getReactedSpeciesSet().size() + " species.");
-				//      		}
+
+				printModelSize();
 				
         	}
 			vTester = vTester + (System.currentTimeMillis()-startTime)/1000/60;//5/6/08 gmagoon: for case where intermediateSteps = false, this will use startTime declared just before intermediateSteps loop, and will only include termination testing, but no validity testing
@@ -2835,10 +2808,15 @@ public class ReactionModelGenerator {
 													 numFamePress,numChebyTemps,numChebyPress,numPlog));
 					
 					PDepReaction currentPDepReverseRxn = currentPDepRxn.getReverseReaction();
-					bw.write(currentPDepReverseRxn.toString());
-					bw.newLine();
-					bw.write(writeRatesAndParameters(currentPDepReverseRxn,numFameTemps,
-													 numFamePress,numChebyTemps,numChebyPress,numPlog));
+					// Not all netReactions are reversible
+					if (currentPDepReverseRxn != null) {
+						bw.write(currentPDepReverseRxn.toString());
+						bw.newLine();
+						bw.write(writeRatesAndParameters(currentPDepReverseRxn,numFameTemps,
+														 numFamePress,numChebyTemps,numChebyPress,numPlog));
+					} else {
+						System.out.println("Irreversible netReaction: " + currentPDepRxn.toString());
+					}
 					
 				}
 				
@@ -2855,10 +2833,14 @@ public class ReactionModelGenerator {
 													 numFamePress,numChebyTemps,numChebyPress,numPlog));
 					
 					PDepReaction currentPDepReverseRxn = currentPDepRxn.getReverseReaction();
-					bw.write(currentPDepReverseRxn.toString());
-					bw.newLine();
-					bw.write(writeRatesAndParameters(currentPDepReverseRxn,numFameTemps,
-													 numFamePress,numChebyTemps,numChebyPress,numPlog));
+					// Not all nonIncludedReactions are reversible
+					if (currentPDepReverseRxn != null) {
+						bw.write(currentPDepReverseRxn.toString());
+						bw.newLine();
+						bw.write(writeRatesAndParameters(currentPDepReverseRxn,numFameTemps,
+														 numFamePress,numChebyTemps,numChebyPress,numPlog));
+					}
+					
 				}
 				
 				// Write pathReactionList
@@ -3043,8 +3025,13 @@ public class ReactionModelGenerator {
 					System.out.println("Error reading graph: Graph contains a forbidden structure.\n" + g.toString());
 					System.exit(0);
 				}
+				// Rewrite the species name ... with the exception of the (#)
+				String speciesName = splitString1[0];
+				for (int numTokens=1; numTokens<splitString1.length-1; ++numTokens) {
+					speciesName += "(" + splitString1[numTokens];
+				}
 				// Make the species
-				Species species = Species.make(splitString1[0],cg,Integer.parseInt(splitString2[0]));
+				Species species = Species.make(speciesName,cg,Integer.parseInt(splitString2[0]));
 				// Add the new species to the set of species
 				restartEdgeSpcs.add(species);
 				line = ChemParser.readMeaningfulLine(reader);
@@ -3262,7 +3249,6 @@ public class ReactionModelGenerator {
     }
     
     public void readPDepNetworks() {
-    	SpeciesDictionary sd = SpeciesDictionary.getInstance();
     	LinkedList allNetworks = PDepNetwork.getNetworks(); 
     	
     	try {
@@ -3307,152 +3293,40 @@ public class ReactionModelGenerator {
 						
 						// Read in the forward rxn
 						String[] reactsANDprods = line.split("\\-->");
+						/*
+						 * Determine if netReaction is reversible or irreversible
+						 */
+						boolean reactionIsReversible = true;
+						if (reactsANDprods.length == 2)
+							reactionIsReversible = false;
+						else
+							reactsANDprods = line.split("\\<=>");
 						
-						PDepIsomer Reactants = null;
-						String reacts = reactsANDprods[0].trim();
-						if (reacts.contains("+")) {
-							String[] indivReacts = reacts.split("[+]");
-							String name = indivReacts[0].trim();
-							Species spc1 = sd.getSpeciesFromChemkinName(name);
-							if (spc1 == null) {
-								spc1 = getSpeciesBySPCName(name,sd);
-							}							
-							name = indivReacts[1].trim();
-							Species spc2 = sd.getSpeciesFromChemkinName(name);
-							if (spc2 == null) {
-								spc2 = getSpeciesBySPCName(name,sd);
-							}	
-							Reactants = new PDepIsomer(spc1,spc2);
-						} else {
-							String name = reacts.trim();
-							Species spc = sd.getSpeciesFromChemkinName(name);
-							if (spc == null) {
-								spc = getSpeciesBySPCName(name,sd);
-							}	
-							Reactants = new PDepIsomer(spc);
-						}
-						
-						PDepIsomer Products = null;
-						String prods = reactsANDprods[1].trim();
-						if (prods.contains("+")) {
-							String[] indivProds = prods.split("[+]");
-							String name = indivProds[0].trim();
-							Species spc1 = sd.getSpeciesFromChemkinName(name);
-							if (spc1 == null) {
-								spc1 = getSpeciesBySPCName(name,sd);
-							}	
-							name = indivProds[1].trim();
-							Species spc2 = sd.getSpeciesFromChemkinName(name);
-							if (spc2 == null) {
-								spc2 = getSpeciesBySPCName(name,sd);
-							}	
-							Products = new PDepIsomer(spc1,spc2);
-						} else {
-							String name = prods.trim();
-							Species spc = sd.getSpeciesFromChemkinName(name);
-							if (spc == null) {
-								spc = getSpeciesBySPCName(name,sd);
-							}	
-							Products = new PDepIsomer(spc);
-						}
-						
+						PDepIsomer Reactants = parseIsomerFromRestartFile(reactsANDprods[0].trim());
+						PDepIsomer Products =  parseIsomerFromRestartFile(reactsANDprods[1].trim());
+
 						newNetwork.addIsomer(Reactants);
 						newNetwork.addIsomer(Products);
 						
-						for (int i=0; i<numFameTs; i++) {
-							st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
-							for (int j=0; j<numFamePs; j++) {
-								rateCoefficients[i][j] = Double.parseDouble(st.nextToken());
-							}
-						}
-						
-						PDepRateConstant pdepk = null;
-						if (numChebyTs > 0) {
-							for (int i=0; i<numChebyTs; i++) {
-								st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
-								for (int j=0; j<numChebyPs; j++) {
-									chebyPolys[i][j] = Double.parseDouble(st.nextToken());
-								}
-							}
-							ChebyshevPolynomials chebyshev = new ChebyshevPolynomials(numChebyTs,
-																					  ChebyshevPolynomials.getTlow(), ChebyshevPolynomials.getTup(),
-																					  numChebyPs, ChebyshevPolynomials.getPlow(), ChebyshevPolynomials.getPup(),
-																					  chebyPolys);
-							pdepk = new PDepRateConstant(rateCoefficients,chebyshev);
-						} else if (numPlogs > 0) {
-							for (int i=0; i<numPlogs; i++) {
-								st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
-								Pressure p = new Pressure(Double.parseDouble(st.nextToken()),"Pa");
-								UncertainDouble dA = new UncertainDouble(Double.parseDouble(st.nextToken()),0.0,"A");
-								UncertainDouble dn = new UncertainDouble(Double.parseDouble(st.nextToken()),0.0,"A");
-								double Ea = Double.parseDouble(st.nextToken());
-								if (EaUnits.equals("cal/mol"))
-									Ea = Ea / 1000;
-								else if (EaUnits.equals("J/mol"))
-									Ea = Ea / 4.184 / 1000;
-								else if (EaUnits.equals("kJ/mol"))
-									Ea = Ea / 4.184;
-								else if (EaUnits.equals("Kelvins"))
-									Ea = Ea * 1.987;
-								UncertainDouble dE = new UncertainDouble(Ea,0.0,"A");
-								ArrheniusKinetics k = new ArrheniusKinetics(dA, dn, dE, "", 1, "", "");
-								PDepArrheniusKinetics pdepAK = new PDepArrheniusKinetics(i);
-								pdepAK.setKinetics(i, p, k);
-								pdepk = new PDepRateConstant(rateCoefficients,pdepAK);
-							}
-						}
-						
+						rateCoefficients = parseRateCoeffsFromRestartFile(numFameTs,numFamePs,reader);
+						PDepRateConstant pdepk = parsePDepRateConstantFromRestartFile(reader,numChebyTs,numChebyPs,rateCoefficients,numPlogs,EaUnits);											
 						PDepReaction forward = new PDepReaction(Reactants, Products, pdepk);
-						
+
 						// Read in the reverse reaction
-						line = ChemParser.readMeaningfulLine(reader);
-						
-						for (int i=0; i<numFameTs; i++) {
-							st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
-							for (int j=0; j<numFamePs; j++) {
-								rateCoefficients[i][j] = Double.parseDouble(st.nextToken());
-							}
+						if (reactionIsReversible) {
+							line = ChemParser.readMeaningfulLine(reader);
+							
+							rateCoefficients = parseRateCoeffsFromRestartFile(numFameTs,numFamePs,reader);
+							pdepk = parsePDepRateConstantFromRestartFile(reader,numChebyTs,numChebyPs,rateCoefficients,numPlogs,EaUnits);											
+							
+							PDepReaction reverse = new PDepReaction(Products, Reactants, pdepk);
+							reverse.setReverseReaction(forward);
+							forward.setReverseReaction(reverse);
 						}
-						
-						pdepk = null;
-						if (numChebyTs > 0) {
-							for (int i=0; i<numChebyTs; i++) {
-								st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
-								for (int j=0; j<numChebyPs; j++) {
-									chebyPolys[i][j] = Double.parseDouble(st.nextToken());
-								}
-							}
-							ChebyshevPolynomials chebyshev = new ChebyshevPolynomials(numChebyTs,
-																					  ChebyshevPolynomials.getTlow(), ChebyshevPolynomials.getTup(),
-																					  numChebyPs, ChebyshevPolynomials.getPlow(), ChebyshevPolynomials.getPup(),
-																					  chebyPolys);
-							pdepk = new PDepRateConstant(rateCoefficients,chebyshev);
-						} else if (numPlogs > 0) {
-							for (int i=0; i<numPlogs; i++) {
-								st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
-								Pressure p = new Pressure(Double.parseDouble(st.nextToken()),"Pa");
-								UncertainDouble dA = new UncertainDouble(Double.parseDouble(st.nextToken()),0.0,"A");
-								UncertainDouble dn = new UncertainDouble(Double.parseDouble(st.nextToken()),0.0,"A");
-								double Ea = Double.parseDouble(st.nextToken());
-								if (EaUnits.equals("cal/mol"))
-									Ea = Ea / 1000;
-								else if (EaUnits.equals("J/mol"))
-									Ea = Ea / 4.184 / 1000;
-								else if (EaUnits.equals("kJ/mol"))
-									Ea = Ea / 4.184;
-								else if (EaUnits.equals("Kelvins"))
-									Ea = Ea * 1.987;
-								UncertainDouble dE = new UncertainDouble(Ea,0.0,"A");
-								ArrheniusKinetics k = new ArrheniusKinetics(dA, dn, dE, "", 1, "", "");
-								PDepArrheniusKinetics pdepAK = new PDepArrheniusKinetics(i);
-								pdepAK.setKinetics(i, p, k);
-								pdepk = new PDepRateConstant(rateCoefficients,pdepAK);
-							}
+						else {
+							PDepReaction reverse = null;
+							forward.setReverseReaction(reverse);
 						}
-						
-						PDepReaction reverse = new PDepReaction(Products, Reactants, pdepk);
-						reverse.setReverseReaction(forward);
-						forward.setReverseReaction(reverse);
 						
 						netRxns.add(forward);
 						
@@ -3469,152 +3343,40 @@ public class ReactionModelGenerator {
 						
 						// Read in the forward rxn
 						String[] reactsANDprods = line.split("\\-->");
+						/*
+						 * Determine if nonIncludedReaction is reversible or irreversible
+						 */
+						boolean reactionIsReversible = true;
+						if (reactsANDprods.length == 2)
+							reactionIsReversible = false;
+						else
+							reactsANDprods = line.split("\\<=>");
 						
-						PDepIsomer Reactants = null;
-						String reacts = reactsANDprods[0].trim();
-						if (reacts.contains("+")) {
-							String[] indivReacts = reacts.split("[+]");
-							String name = indivReacts[0].trim();
-							Species spc1 = sd.getSpeciesFromChemkinName(name);
-							if (spc1 == null) {
-								spc1 = getSpeciesBySPCName(name,sd);
-							}	
-							name = indivReacts[1].trim();
-							Species spc2 = sd.getSpeciesFromChemkinName(name);
-							if (spc2 == null) {
-								spc2 = getSpeciesBySPCName(name,sd);
-							}	
-							Reactants = new PDepIsomer(spc1,spc2);
-						} else {
-							String name = reacts.trim();
-							Species spc = sd.getSpeciesFromChemkinName(name);
-							if (spc == null) {
-								spc = getSpeciesBySPCName(name,sd);
-							}	
-							Reactants = new PDepIsomer(spc);
-						}
-						
-						PDepIsomer Products = null;
-						String prods = reactsANDprods[1].trim();
-						if (prods.contains("+")) {
-							String[] indivProds = prods.split("[+]");
-							String name = indivProds[0].trim();
-							Species spc1 = sd.getSpeciesFromChemkinName(name);
-							if (spc1 == null) {
-								spc1 = getSpeciesBySPCName(name,sd);
-							}	
-							name = indivProds[1].trim();
-							Species spc2 = sd.getSpeciesFromChemkinName(name);
-							if (spc2 == null) {
-								spc2 = getSpeciesBySPCName(name,sd);
-							}	
-							Products = new PDepIsomer(spc1,spc2);
-						} else {
-							String name = prods.trim();
-							Species spc = sd.getSpeciesFromChemkinName(name);
-							if (spc == null) {
-								spc = getSpeciesBySPCName(name,sd);
-							}	
-							Products = new PDepIsomer(spc);
-						}
+						PDepIsomer Reactants = parseIsomerFromRestartFile(reactsANDprods[0].trim());
+						PDepIsomer Products =  parseIsomerFromRestartFile(reactsANDprods[1].trim());
 						
 						newNetwork.addIsomer(Reactants);
 						newNetwork.addIsomer(Products);
 						
-						for (int i=0; i<numFameTs; i++) {
-							st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
-							for (int j=0; j<numFamePs; j++) {
-								rateCoefficients[i][j] = Double.parseDouble(st.nextToken());
-							}
-						}
-						
-						PDepRateConstant pdepk = null;
-						if (numChebyTs > 0) {
-							for (int i=0; i<numChebyTs; i++) {
-								st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
-								for (int j=0; j<numChebyPs; j++) {
-									chebyPolys[i][j] = Double.parseDouble(st.nextToken());
-								}
-							}
-							ChebyshevPolynomials chebyshev = new ChebyshevPolynomials(numChebyTs,
-																					  ChebyshevPolynomials.getTlow(), ChebyshevPolynomials.getTup(),
-																					  numChebyPs, ChebyshevPolynomials.getPlow(), ChebyshevPolynomials.getPup(),
-																					  chebyPolys);
-							pdepk = new PDepRateConstant(rateCoefficients,chebyshev);
-						} else if (numPlogs > 0) {
-							for (int i=0; i<numPlogs; i++) {
-								st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
-								Pressure p = new Pressure(Double.parseDouble(st.nextToken()),"Pa");
-								UncertainDouble dA = new UncertainDouble(Double.parseDouble(st.nextToken()),0.0,"A");
-								UncertainDouble dn = new UncertainDouble(Double.parseDouble(st.nextToken()),0.0,"A");
-								double Ea = Double.parseDouble(st.nextToken());
-								if (EaUnits.equals("cal/mol"))
-									Ea = Ea / 1000;
-								else if (EaUnits.equals("J/mol"))
-									Ea = Ea / 4.184 / 1000;
-								else if (EaUnits.equals("kJ/mol"))
-									Ea = Ea / 4.184;
-								else if (EaUnits.equals("Kelvins"))
-									Ea = Ea * 1.987;
-								UncertainDouble dE = new UncertainDouble(Ea,0.0,"A");
-								ArrheniusKinetics k = new ArrheniusKinetics(dA, dn, dE, "", 1, "", "");
-								PDepArrheniusKinetics pdepAK = new PDepArrheniusKinetics(i);
-								pdepAK.setKinetics(i, p, k);
-								pdepk = new PDepRateConstant(rateCoefficients,pdepAK);
-							}
-						}
-						
+						rateCoefficients = parseRateCoeffsFromRestartFile(numFameTs,numFamePs,reader);
+						PDepRateConstant pdepk = parsePDepRateConstantFromRestartFile(reader,numChebyTs,numChebyPs,rateCoefficients,numPlogs,EaUnits);											
 						PDepReaction forward = new PDepReaction(Reactants, Products, pdepk);
 						
 						// Read in the reverse reaction
-						line = ChemParser.readMeaningfulLine(reader);
-						
-						for (int i=0; i<numFameTs; i++) {
-							st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
-							for (int j=0; j<numFamePs; j++) {
-								rateCoefficients[i][j] = Double.parseDouble(st.nextToken());
-							}
+						if (reactionIsReversible) {
+							line = ChemParser.readMeaningfulLine(reader);
+							
+							rateCoefficients = parseRateCoeffsFromRestartFile(numFameTs,numFamePs,reader);
+							pdepk = parsePDepRateConstantFromRestartFile(reader,numChebyTs,numChebyPs,rateCoefficients,numPlogs,EaUnits);											
+							
+							PDepReaction reverse = new PDepReaction(Products, Reactants, pdepk);
+							reverse.setReverseReaction(forward);
+							forward.setReverseReaction(reverse);
 						}
-						
-						pdepk = null;
-						if (numChebyTs > 0) {
-							for (int i=0; i<numChebyTs; i++) {
-								st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
-								for (int j=0; j<numChebyPs; j++) {
-									chebyPolys[i][j] = Double.parseDouble(st.nextToken());
-								}
-							}
-							ChebyshevPolynomials chebyshev = new ChebyshevPolynomials(numChebyTs,
-																					  ChebyshevPolynomials.getTlow(), ChebyshevPolynomials.getTup(),
-																					  numChebyPs, ChebyshevPolynomials.getPlow(), ChebyshevPolynomials.getPup(),
-																					  chebyPolys);
-							pdepk = new PDepRateConstant(rateCoefficients,chebyshev);
-						} else if (numPlogs > 0) {
-							for (int i=0; i<numPlogs; i++) {
-								st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
-								Pressure p = new Pressure(Double.parseDouble(st.nextToken()),"Pa");
-								UncertainDouble dA = new UncertainDouble(Double.parseDouble(st.nextToken()),0.0,"A");
-								UncertainDouble dn = new UncertainDouble(Double.parseDouble(st.nextToken()),0.0,"A");
-								double Ea = Double.parseDouble(st.nextToken());
-								if (EaUnits.equals("cal/mol"))
-									Ea = Ea / 1000;
-								else if (EaUnits.equals("J/mol"))
-									Ea = Ea / 4.184 / 1000;
-								else if (EaUnits.equals("kJ/mol"))
-									Ea = Ea / 4.184;
-								else if (EaUnits.equals("Kelvins"))
-									Ea = Ea * 1.987;
-								UncertainDouble dE = new UncertainDouble(Ea,0.0,"A");
-								ArrheniusKinetics k = new ArrheniusKinetics(dA, dn, dE, "", 1, "", "");
-								PDepArrheniusKinetics pdepAK = new PDepArrheniusKinetics(i);
-								pdepAK.setKinetics(i, p, k);
-								pdepk = new PDepRateConstant(rateCoefficients,pdepAK);
-							}
+						else {
+							PDepReaction reverse = null;
+							forward.setReverseReaction(reverse);
 						}
-						
-						PDepReaction reverse = new PDepReaction(Products, Reactants, pdepk);
-						reverse.setReverseReaction(forward);
-						forward.setReverseReaction(reverse);
 						
 						nonincludeRxns.add(forward);
 						
@@ -3643,7 +3405,7 @@ public class ReactionModelGenerator {
 			    		generateReverse = true;
 			    	}
 			    	
-			    	sd = SpeciesDictionary.getInstance();
+			    	SpeciesDictionary sd = SpeciesDictionary.getInstance();
 			        LinkedList r = ChemParser.parseReactionSpecies(sd, reactsANDprods[0]);
 			        LinkedList p = ChemParser.parseReactionSpecies(sd, reactsANDprods[1]);
 					
@@ -3707,6 +3469,96 @@ public class ReactionModelGenerator {
 		}
     }
     
+    public PDepIsomer parseIsomerFromRestartFile(String p_string) {
+    	SpeciesDictionary sd = SpeciesDictionary.getInstance();
+    	
+    	PDepIsomer isomer = null;
+		if (p_string.contains("+")) {
+			String[] indivReacts = p_string.split("[+]");
+			String name = indivReacts[0].trim();
+			Species spc1 = sd.getSpeciesFromNameID(name);
+			if (spc1 == null) {
+				spc1 = getSpeciesBySPCName(name,sd);
+			}
+			name = indivReacts[1].trim();
+			String[] nameANDincluded = name.split("\\(included =");
+			Species spc2 = sd.getSpeciesFromNameID(nameANDincluded[0].trim());
+			if (spc2 == null) {
+				spc2 = getSpeciesBySPCName(name,sd);
+			}
+			boolean isIncluded = Boolean.parseBoolean(nameANDincluded[1].substring(0,nameANDincluded[1].length()-1));
+			isomer = new PDepIsomer(spc1,spc2,isIncluded);
+		} else {
+			String name = p_string.trim();
+			/*
+			 * Separate the (included =boolean) portion of the string
+			 * 	from the name of the Isomer
+			 */
+			String[] nameANDincluded = name.split("\\(included =");
+			Species spc = sd.getSpeciesFromNameID(nameANDincluded[0].trim());
+			if (spc == null) {
+				spc = getSpeciesBySPCName(name,sd);
+			}
+			boolean isIncluded = Boolean.parseBoolean(nameANDincluded[1].substring(0,nameANDincluded[1].length()-1)); 
+			isomer = new PDepIsomer(spc,isIncluded);
+		}
+		
+		return isomer;
+    }
+    
+    public double[][] parseRateCoeffsFromRestartFile(int numFameTs, int numFamePs, BufferedReader reader) {
+    	double[][] rateCoefficients = new double[numFameTs][numFamePs];
+		for (int i=0; i<numFameTs; i++) {
+			StringTokenizer st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
+			for (int j=0; j<numFamePs; j++) {
+				rateCoefficients[i][j] = Double.parseDouble(st.nextToken());
+			}
+		}
+		return rateCoefficients;
+    }
+    
+    public PDepRateConstant parsePDepRateConstantFromRestartFile(BufferedReader reader, 
+    		int numChebyTs, int numChebyPs, double[][] rateCoefficients, 
+    		int numPlogs, String EaUnits) {
+    	PDepRateConstant pdepk = null;
+		if (numChebyTs > 0) {
+			double chebyPolys[][] = new double[numChebyTs][numChebyPs];
+			for (int i=0; i<numChebyTs; i++) {
+				StringTokenizer st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
+				for (int j=0; j<numChebyPs; j++) {
+					chebyPolys[i][j] = Double.parseDouble(st.nextToken());
+				}
+			}
+			ChebyshevPolynomials chebyshev = new ChebyshevPolynomials(numChebyTs,
+																	  ChebyshevPolynomials.getTlow(), ChebyshevPolynomials.getTup(),
+																	  numChebyPs, ChebyshevPolynomials.getPlow(), ChebyshevPolynomials.getPup(),
+																	  chebyPolys);
+			pdepk = new PDepRateConstant(rateCoefficients,chebyshev);
+		} else if (numPlogs > 0) {
+			for (int i=0; i<numPlogs; i++) {
+				StringTokenizer st = new StringTokenizer(ChemParser.readMeaningfulLine(reader));
+				Pressure p = new Pressure(Double.parseDouble(st.nextToken()),"Pa");
+				UncertainDouble dA = new UncertainDouble(Double.parseDouble(st.nextToken()),0.0,"A");
+				UncertainDouble dn = new UncertainDouble(Double.parseDouble(st.nextToken()),0.0,"A");
+				double Ea = Double.parseDouble(st.nextToken());
+				if (EaUnits.equals("cal/mol"))
+					Ea = Ea / 1000;
+				else if (EaUnits.equals("J/mol"))
+					Ea = Ea / 4.184 / 1000;
+				else if (EaUnits.equals("kJ/mol"))
+					Ea = Ea / 4.184;
+				else if (EaUnits.equals("Kelvins"))
+					Ea = Ea * 1.987;
+				UncertainDouble dE = new UncertainDouble(Ea,0.0,"A");
+				ArrheniusKinetics k = new ArrheniusKinetics(dA, dn, dE, "", 1, "", "");
+				PDepArrheniusKinetics pdepAK = new PDepArrheniusKinetics(i);
+				pdepAK.setKinetics(i, p, k);
+				pdepk = new PDepRateConstant(rateCoefficients,pdepAK);
+			}
+		}
+		return pdepk;
+    }
+    
     /**
      * MRH 14Jan2010
      * 
@@ -3745,8 +3597,6 @@ public class ReactionModelGenerator {
     	LinkedHashSet allInitialCoreRxns = new LinkedHashSet();
     	
     	if (readrestart) {
-    		readRestartReactions();
-    		if (PDepNetwork.generateNetworks) readPDepNetworks();
     		allInitialCoreSpecies.addAll(restartCoreSpcs);
     		allInitialCoreRxns.addAll(restartCoreRxns);
     	}
@@ -3772,19 +3622,49 @@ public class ReactionModelGenerator {
 		// Determine initial set of reactions and edge species using only the
 		// species enumerated in the input file and the seed mechanisms as the core
 		if (!readrestart) {
+			LinkedHashSet reactionSet_withdup;
 			LinkedHashSet reactionSet;
-			if (hasSeedMechanisms() && getSeedMechanism().shouldGenerateReactions()) {
-				reactionSet = getReactionGenerator().react(allInitialCoreSpecies);
-			}
-			else {
-				reactionSet = new LinkedHashSet();
-				for (Iterator iter = speciesSeed.iterator(); iter.hasNext(); ) {
-					Species spec = (Species) iter.next();
-					reactionSet.addAll(getReactionGenerator().react(allInitialCoreSpecies, spec));
-				}
-			}
-			reactionSet.addAll(getLibraryReactionGenerator().react(allInitialCoreSpecies));
 			
+			// If Seed Mechanism is present and Generate Reaction is set on  
+			if (hasSeedMechanisms() && getSeedMechanism().shouldGenerateReactions()) {
+				
+				reactionSet_withdup = getLibraryReactionGenerator().react(allInitialCoreSpecies);
+				reactionSet_withdup.addAll(getReactionGenerator().react(allInitialCoreSpecies));
+				
+				// Removing Duplicates instances of reaction if present 
+				 reactionSet = RemoveDuplicateReac(reactionSet_withdup);
+				 
+				// shamel 6/22/2010 Suppressed output , line is only for debugging
+				//System.out.println("Current Reaction Set after RModG + LRG and Removing Dups"+reactionSet);
+			}
+			
+			else {
+				reactionSet_withdup = new LinkedHashSet();	
+				
+				//System.out.println("Initial Core Species RModG"+allInitialCoreSpecies);
+				
+				LinkedHashSet tempnewReactionSet = getLibraryReactionGenerator().react(allInitialCoreSpecies);
+				System.out.println("Reaction Set Found from Reaction Library "+tempnewReactionSet);
+				
+				// Adds Reactions Found in Library Reaction Generator to Reaction Set
+				reactionSet_withdup.addAll(getLibraryReactionGenerator().react(allInitialCoreSpecies));
+				
+				// shamel 6/22/2010 Suppressed output , line is only for debugging
+				//System.out.println("Current Reaction Set after LRG"+reactionSet_withdup);
+				
+				// Generates Reaction from the Reaction Generator and adds them to Reaction Set
+					for (Iterator iter = speciesSeed.iterator(); iter.hasNext(); ) {
+					Species spec = (Species) iter.next();
+					reactionSet_withdup.addAll(getReactionGenerator().react(allInitialCoreSpecies, spec,"All"));
+				}
+					reactionSet = RemoveDuplicateReac(reactionSet_withdup);
+					
+					// shamel 6/22/2010 Suppressed output , line is only for debugging
+					//System.out.println("Current Reaction Set after RModG + LRG and Removing Dups"+reactionSet);
+			}
+			
+			
+		
 	    	// Set initial core-edge reaction model based on above results
 			if (reactionModelEnlarger instanceof RateBasedRME)	{
 				Iterator iter = reactionSet.iterator();
@@ -3834,18 +3714,187 @@ public class ReactionModelGenerator {
     	
     }
     
-    //## operation initializeCoreEdgeModelWithPRL()
+    public LinkedHashSet RemoveDuplicateReac(LinkedHashSet reaction_set){
+    	
+   	 // Get the reactants and products of a reaction and check with other reaction if both reactants and products
+   	 // match - delete duplicate entry, give preference to Seed Mechanism > Reaction Library >  Reaction Template 
+   	 // this information might be available from the comments 
+   	
+   	LinkedHashSet newreaction_set = new LinkedHashSet();
+   	
+   	Iterator iter_reaction =reaction_set.iterator();
+   	
+   	Reaction current_reaction;
+   	
+   	while(iter_reaction.hasNext()){
+   		// Cast it into a  Reaction ( i.e pick the reaction )
+       	current_reaction = (Reaction)iter_reaction.next();
+       	
+       	// To remove current reaction from reaction_set
+       	reaction_set.remove(current_reaction);
+       	
+       	// Match Current Reaction with the reaction set and if a duplicate reaction is found remove that reaction 
+              LinkedHashSet dupreaction_set = dupreaction(reaction_set,current_reaction);
+           
+           // Remove the duplicate reaction from reaction set
+              reaction_set.removeAll(dupreaction_set);
+           
+           // If duplicate reaction set was not empty 
+              if(!dupreaction_set.isEmpty()){
+ 
+           // Add current reaction to duplicate set and from among this choose reaction according to
+           // following hierarchy Seed > Reaction Library > Template. Add that reaction to the newreaction_set
+              
+           // Add current_reaction to duplicate set 
+              dupreaction_set.add(current_reaction);
+           
+           // Get Reaction according to hierarchy
+              LinkedHashSet reaction_toadd = reaction_add(dupreaction_set);
+              
+           // Add all the Reactions to be kept to new_reaction set     
+              newreaction_set.addAll(reaction_toadd);
+              }
+              else{
+           // If no duplicate reaction was found add the current reaction to the newreaction set
+           	   newreaction_set.add(current_reaction);
+              }   
+           // Need to change iterate over counter here 
+              iter_reaction =reaction_set.iterator();
+       	}
+   	return newreaction_set;
+   }
+  
+   
+   public LinkedHashSet reaction_add(LinkedHashSet reaction_set){
+   	
+   	Reaction current_reaction;
+   	
+   	Iterator iter_reaction = reaction_set.iterator();
+   	
+   	LinkedHashSet reaction_seedset = new LinkedHashSet();
+   	
+   	LinkedHashSet reaction_rlset = new LinkedHashSet();
+   	
+   	LinkedHashSet reaction_trset = new LinkedHashSet();
+   	
+   	
+   	while(iter_reaction.hasNext()){
+   		// Cast it into a  Reaction ( i.e pick the reaction )
+       	current_reaction = (Reaction)iter_reaction.next();
+       	
+       	// As I cant call the instance test as I have casted my reaction as a Reaction 
+       	// I will use the source (comments) to find whether a reaction is from Seed Mechanism
+       	// Reaction Library or Template Reaction
+       	
+       	String source = current_reaction.getKineticsSource(0);
+       	//System.out.println("Source"+source);
+       	
+       	if (source == null){
+       		// If source is null I am assuming that its not a Reaction from Reaction Library or Seed Mechanism
+       		source = "TemplateReaction:";
+       	}
+       	
+       	// To grab the First word from the source of the comment
+       	// As we have Reaction_Type:, we will use : as our string tokenizer
+       	StringTokenizer st = new StringTokenizer(source,":");
+       	String reaction_type = st.nextToken();
+       	
+       	// shamel: Cant think of more elegant way for now
+       	// Splitting the set into Reactions from Seed Mechanism/Reaction Library and otherwise Template Reaction
+       	if (reaction_type.equals( "SeedMechanism")){
+       		// Add to seed mechanism set
+       		reaction_seedset.add(current_reaction);
+       	}        	
+       	else if (reaction_type.equals("ReactionLibrary") ){
+       		// Add to reaction library set
+       		reaction_rlset.add(current_reaction);
+       	}
+       	else{
+       		// Add to template reaction set
+       		reaction_trset.add(current_reaction);
+       	}
+       		
+       	
+       	
+   	}
+   	 if(!reaction_seedset.isEmpty()){
+   		 // shamel: 6/10/2010 Debug lines
+   		 //System.out.println("Reaction Set Being Returned"+reaction_seedset);
+   		 return reaction_seedset;
+   	 }
+   	 else if(!reaction_rlset.isEmpty()){
+   		 //System.out.println("Reaction Set Being Returned in ReactModGen"+reaction_rlset);
+   		 return reaction_rlset;
+   	 }
+   	 else{
+   		 //System.out.println("Reaction Set Being Returned"+reaction_trset); 
+   		return reaction_trset; 
+   	 }
+   	
+   }
+   
+
+   
+   public LinkedHashSet dupreaction(LinkedHashSet reaction_set, Reaction test_reaction){
+   	// Iterate over the reaction set and find if a duplicate reaction exist for the the test reaction 
+
+   	LinkedHashSet dupreaction_set = new LinkedHashSet();	
+   	
+   	Iterator iter_reaction =reaction_set.iterator();
+   	
+   	Reaction current_reaction;
+   	
+   	// we will test if reaction are equal by structure test here, structure dosent require kinetics
+   	
+   	// Get Structure of test reaction
+   	Structure test_reactionstructure = test_reaction.getStructure();
+   	
+   	// Get reverse structure of test reaction
+   	Structure test_reactionstructure_rev = test_reactionstructure.generateReverseStructure();
+   	
+   	   	    	
+   	while(iter_reaction.hasNext()){
+   		// Cast it into a  Reaction ( i.e pick the reaction )
+       	current_reaction = (Reaction)iter_reaction.next();
+       	
+       	// Get Structure of current reaction to be tested for equality to test reaction
+       	Structure current_reactionstructure = current_reaction.getStructure();
+       	
+       	// Check if Current Reaction Structure matches the Fwd Structure of Test Reaction
+       	if(current_reactionstructure.equals(test_reactionstructure)){
+       		dupreaction_set.add(current_reaction);
+       	}
+       	
+       	// Check if Current Reaction Structure matches the Reverse Structure of Test Reaction
+       	if(current_reactionstructure.equals(test_reactionstructure_rev)){
+       		dupreaction_set.add(current_reaction);
+       	}
+       	
+       	        		
+   	}
+   	
+   	// Print out the dupreaction set if not empty
+   	if(!dupreaction_set.isEmpty()){
+    	System.out.println("dupreaction_set" + dupreaction_set);
+    	}
+   	   	
+   	// Return the duplicate reaction set
+   	return dupreaction_set;
+   }
+
+
+	
     //9/24/07 gmagoon: moved from ReactionSystem.java
-    public void initializeCoreEdgeModelWithPRL() {
-        //#[ operation initializeCoreEdgeModelWithPRL()
-        initializeCoreEdgeModelWithoutPRL();
+    public void initializeCoreEdgeModelWithPKL() {
+        
+        initializeCoreEdgeModelWithoutPKL();
 		
         CoreEdgeReactionModel cerm = (CoreEdgeReactionModel)getReactionModel();
 		
-        LinkedHashSet primarySpeciesSet = getPrimaryReactionLibrary().getSpeciesSet(); //10/14/07 gmagoon: changed to use getPrimaryReactionLibrary
-        LinkedHashSet primaryReactionSet = getPrimaryReactionLibrary().getReactionSet();
+        LinkedHashSet primarySpeciesSet = getPrimaryKineticLibrary().getSpeciesSet(); //10/14/07 gmagoon: changed to use getPrimaryReactionLibrary
+        LinkedHashSet primaryKineticSet = getPrimaryKineticLibrary().getReactionSet();
         cerm.addReactedSpeciesSet(primarySpeciesSet);
-        cerm.addPrimaryReactionSet(primaryReactionSet);
+        cerm.addPrimaryKineticSet(primaryKineticSet);
 		
         LinkedHashSet newReactions = getReactionGenerator().react(cerm.getReactedSpeciesSet());
         
@@ -3872,10 +3921,10 @@ public class ReactionModelGenerator {
         //#]
     }
 	
-    //## operation initializeCoreEdgeModelWithoutPRL()
+    
     //9/24/07 gmagoon: moved from ReactionSystem.java
-    protected void initializeCoreEdgeModelWithoutPRL() {
-        //#[ operation initializeCoreEdgeModelWithoutPRL()
+    protected void initializeCoreEdgeModelWithoutPKL() {
+       
 		
 		CoreEdgeReactionModel cerm = new CoreEdgeReactionModel(new LinkedHashSet(getSpeciesSeed()));
 		setReactionModel(cerm);
@@ -3948,8 +3997,8 @@ public class ReactionModelGenerator {
 		System.out.println("\nInitializing core-edge reaction model");
 		// setSpeciesSeed(new LinkedHashSet());//10/4/07 gmagoon:moved from initializeReactionSystem; later moved to modelGeneration()
         //#[ operation initializeCoreEdgeReactionModel()
-		//        if (hasPrimaryReactionLibrary()) initializeCoreEdgeModelWithPRL();
-		//        else initializeCoreEdgeModelWithoutPRL();
+		//        if (hasPrimaryKineticLibrary()) initializeCoreEdgeModelWithPKL();
+		//        else initializeCoreEdgeModelWithoutPKL();
 		/*
 		 * MRH 12-Jun-2009
 		 * 
@@ -4242,9 +4291,9 @@ public class ReactionModelGenerator {
 		return false;
     }
     
-    public boolean hasPrimaryReactionLibrary() {
-        if (primaryReactionLibrary == null) return false;
-        return (primaryReactionLibrary.size() > 0);
+    public boolean hasPrimaryKineticLibrary() {
+        if (primaryKineticLibrary == null) return false;
+        return (primaryKineticLibrary.size() > 0);
     }
     
     public boolean hasSeedMechanisms() {
@@ -4253,14 +4302,24 @@ public class ReactionModelGenerator {
     }
     
     //9/25/07 gmagoon: moved from ReactionSystem.java
-    public PrimaryReactionLibrary getPrimaryReactionLibrary() {
-        return primaryReactionLibrary;
+    public PrimaryKineticLibrary getPrimaryKineticLibrary() {
+        return primaryKineticLibrary;
     }
 	
     //9/25/07 gmagoon: moved from ReactionSystem.java
-    public void setPrimaryReactionLibrary(PrimaryReactionLibrary p_PrimaryReactionLibrary) {
-        primaryReactionLibrary = p_PrimaryReactionLibrary;
+    public void setPrimaryKineticLibrary(PrimaryKineticLibrary p_PrimaryKineticLibrary) {
+        primaryKineticLibrary = p_PrimaryKineticLibrary;
     }
+    
+    public ReactionLibrary getReactionLibrary() {
+        return ReactionLibrary;
+    }
+    
+    public void setReactionLibrary(ReactionLibrary p_ReactionLibrary) {
+        ReactionLibrary = p_ReactionLibrary;
+    }
+
+    
     
     //10/4/07 gmagoon: added
     public LinkedHashSet getSpeciesSeed() {
@@ -4327,7 +4386,7 @@ public class ReactionModelGenerator {
 	return false; //return false if none of the above criteria are met
     }
     
-    public void readAndMakePRL(BufferedReader reader) throws IOException {
+    public void readAndMakePKL(BufferedReader reader) throws IOException {
     	int Ilib = 0;
     	String line = ChemParser.readMeaningfulLine(reader);
     	while (!line.equals("END")) {
@@ -4340,20 +4399,51 @@ public class ReactionModelGenerator {
 			String path = System.getProperty("jing.rxn.ReactionLibrary.pathName");
 			path += "/" + location;
 			if (Ilib==0) {
-				setPrimaryReactionLibrary(new PrimaryReactionLibrary(name, path));
+				setPrimaryKineticLibrary(new PrimaryKineticLibrary(name, path));
 				Ilib++; 	
 			}
 			else {
-				getPrimaryReactionLibrary().appendPrimaryReactionLibrary(name, path);
+				getPrimaryKineticLibrary().appendPrimaryKineticLibrary(name, path);
 				Ilib++;
 			}
 			line = ChemParser.readMeaningfulLine(reader);
 		}
 		if (Ilib==0) {
-			setPrimaryReactionLibrary(null);
+			setPrimaryKineticLibrary(null);
 		}
-		else System.out.println("Primary Reaction Libraries in use: " + getPrimaryReactionLibrary().getName());
+		else System.out.println("Primary Kinetic Libraries in use: " + getPrimaryKineticLibrary().getName());
     }
+    
+
+    public void readAndMakeReactionLibrary(BufferedReader reader) throws IOException {
+    	int Ilib = 0;
+    	String line = ChemParser.readMeaningfulLine(reader);
+    	while (!line.equals("END")) {
+			String[] tempString = line.split("Name: ");
+			String name = tempString[tempString.length-1].trim();
+			line = ChemParser.readMeaningfulLine(reader);
+			tempString = line.split("Location: ");
+			String location = tempString[tempString.length-1].trim();
+			
+			String path = System.getProperty("jing.rxn.ReactionLibrary.pathName");
+			path += "/" + location;
+			if (Ilib==0) {
+				setReactionLibrary(new ReactionLibrary(name, path));
+				Ilib++; 	
+			}
+			else {
+				getReactionLibrary().appendReactionLibrary(name, path);
+				Ilib++;
+			}
+			line = ChemParser.readMeaningfulLine(reader);
+		}
+		if (Ilib==0) {
+			setReactionLibrary(null);
+		}
+		else System.out.println("Reaction Libraries in use: " + getReactionLibrary().getName());
+    }
+    
+    
     
     public void readAndMakePTL(BufferedReader reader) {
      	int numPTLs = 0;
@@ -4433,6 +4523,24 @@ public class ReactionModelGenerator {
 			reactionModelEnlarger = new RateBasedRME();
 			PDepNetwork.generateNetworks = false;
 
+			/*
+			 * If the Spectroscopic Data Estimator field is set to "Frequency Groups,"
+			 * 	terminate the RMG job and inform the user to either:
+			 * 		a) Set the Spectroscopic Data Estimator field to "off," OR
+			 * 		b) Select a pressure-dependent model
+			 * 
+			 * Before, RMG would read in "Frequency Groups" with no pressure-dependence
+			 * 	and carry on.  However, the calculated frequencies would not be stored /
+			 * 	reported (plus increase the runtime), so no point in calculating them.
+			 */
+			
+			if (SpectroscopicData.mode != SpectroscopicData.mode.OFF) {
+				System.err.println("Terminating RMG simulation: User requested frequency estimation, " +
+						"yet no pressure-dependence.\nSUGGESTION: Set the " +
+						"SpectroscopicDataEstimator field in the input file to 'off'.");
+				System.exit(0);
+			}
+			
 			line = ChemParser.readMeaningfulLine(reader);
 		}
 		else if (pDepType.toLowerCase().equals("modifiedstrongcollision") ||
@@ -4974,7 +5082,45 @@ public class ReactionModelGenerator {
     public void setPrimaryTransportLibrary(PrimaryTransportLibrary p_primaryTransportLibrary) {
     	primaryTransportLibrary = p_primaryTransportLibrary;
     }
-    
+
+	/**
+	 * Print the current numbers of core and edge species and reactions to the
+	 * console.
+	 */
+	public void printModelSize() {
+
+		CoreEdgeReactionModel cerm = (CoreEdgeReactionModel) getReactionModel();
+		
+		int numberOfCoreSpecies = cerm.getReactedSpeciesSet().size();
+		int numberOfEdgeSpecies = cerm.getUnreactedSpeciesSet().size();
+		int numberOfCoreReactions = 0;
+		int numberOfEdgeReactions = 0;
+
+		double count = 0.0;
+		for (Iterator iter = cerm.getReactedReactionSet().iterator(); iter.hasNext(); ) {
+			Reaction rxn = (Reaction) iter.next();
+			if (rxn.hasReverseReaction()) count += 0.5;
+			else                          count += 1;
+		}
+		numberOfCoreReactions = (int) Math.round(count);
+
+		count = 0.0;
+		for (Iterator iter = cerm.getUnreactedReactionSet().iterator(); iter.hasNext(); ) {
+			Reaction rxn = (Reaction) iter.next();
+			if (rxn.hasReverseReaction()) count += 0.5;
+			else                          count += 1;
+		}
+		numberOfEdgeReactions = (int) Math.round(count);
+
+		if (reactionModelEnlarger instanceof RateBasedPDepRME) {
+			numberOfCoreReactions += PDepNetwork.getNumCoreReactions(cerm);
+			numberOfEdgeReactions += PDepNetwork.getNumEdgeReactions(cerm);
+		}
+
+		System.out.println("The model core has " + Integer.toString(numberOfCoreReactions) + " reactions and "+ Integer.toString(numberOfCoreSpecies) + " species.");
+		System.out.println("The model edge has " + Integer.toString(numberOfEdgeReactions) + " reactions and "+ Integer.toString(numberOfEdgeSpecies) + " species.");
+
+	}
 }
 /*********************************************************************
  File Path	: RMG\RMG\jing\rxnSys\ReactionModelGenerator.java

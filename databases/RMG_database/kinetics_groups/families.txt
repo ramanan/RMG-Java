@@ -53,3 +53,5 @@
 36      on   primary_initiation
 37      off     recombination
 38      off     H_transfer_2
+39      off      Intra_Disproportionation // greg's
+
