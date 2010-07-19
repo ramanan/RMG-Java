@@ -3,7 +3,7 @@
 RMG News and Updates
 **********************************
 
-2010-06-DD: RMG 3.2 Released!
+2010-06-27: RMG 3.2 Released!
 ==============================
 RMG version 3.2 has been released. The new release includes a number of improvements and bug fixes, including the following:
 
@@ -15,7 +15,7 @@ Features:
 
 - Transport property estimation
 
-- New Primary Reaction Library option for including reactions not  (old Primary Reaction Library has been renamed to Primary Kinetics Library)
+- New Reaction Library option for considering (but not forcing) reactions not automatically identified by RMG's reaction templates (The old Primary Reaction Library has been renamed to Primary Kinetic Library.)
 
 - New reaction model pruning option to reduce number of edge species and ease memory limitations.
 
@@ -27,15 +27,17 @@ Features:
 
 - Various error messages have been improved to give more helpful information to the user.
 
-- Dictionary.txt will now be written at every iteration, rather than just the final iteration.
+- :file:`RMG_Dictionary.txt` will now be written at every iteration, rather than just the final iteration.
 
 - CHEMKIN input files from each iteration are saved to separate folders
 
 - RMG output file includes timestamp and code revision information.
 
+- RMG stores :file:`Restart` files.  The reading-in of these files allows RMG to restore the conditions (species, reactions, pressure-dependent networks, etc.) of a converged mechanism without having to re-run the entire simulation from scratch.
+
 Bug fixes and performance improvements:
 
-- Treatment of molecular oxygen has changed significantly, including support for both triplet ground state and singlet; oxygen should now be specified in biradical form rather than the O=O form used previously
+- Treatment of molecular oxygen has changed significantly, including support for both triplet ground state and singlet; oxygen should now be specified in biradical form rather than the O=O form used previously; see :ref:`"Representing oxygen" <oxygen>` for details
 
 - Various improvements to pressure-dependent network enlargement algorithm
 
@@ -51,7 +53,7 @@ Bug fixes and performance improvements:
 
 - Fixed several bugs relating to enlarging of partial pressure-dependent networks.
 
-- Addressed issues that could lead to trying to simulate and empty reaction model in pressure-dependent cases.
+- Addressed issues that could lead to trying to simulate an empty reaction model in pressure-dependent cases.
 
 - Fixed IWORK/RWORK renaming on Linux platforms.
 
@@ -74,6 +76,8 @@ Bug fixes and performance improvements:
 - Fixed syntax for helium thermochemistry in CHEMKIN input file written by RMG.
 
 - Fixed bugs in counting of core and edge reactions caused by pressure-dependent reactions and irreversible reactions.
+
+- Primary Kinetics Library now correctly identifies matches for molecules with multiple resonance forms
 
 2009-08-05: RMG 3.1 Released!
 ==============================

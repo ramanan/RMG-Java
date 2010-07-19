@@ -175,7 +175,7 @@ public class LibraryReactionGenerator implements ReactionGenerator {
     }
     
      
-    public LinkedHashSet react(LinkedHashSet p_speciesSet, Species p_species) {
+    public LinkedHashSet react(LinkedHashSet p_speciesSet, Species p_species, String p_rxnFamilyName) {
                if (!p_speciesSet.contains(p_species)) p_speciesSet.add(p_species);
         LinkedHashSet species = (LinkedHashSet)p_speciesSet.clone();
         
@@ -192,7 +192,7 @@ public class LibraryReactionGenerator implements ReactionGenerator {
     	while (iter_reaction.hasNext()){
     		Reaction rxn =(Reaction)iter_reaction.next();
     		if (rxn instanceof ThirdBodyReaction || rxn instanceof TROEReaction || rxn instanceof LindemannReaction)
-    			System.out.println("RMG is only utilizing the high-pressure limit parameters for Reaction Library, reaction: " + rxn.toString());
+    			System.out.println("RMG is only using the high-pressure limit parameters from Reaction Library, reaction: " + rxn.toString());
     	}
         return reactionSet;
     }
