@@ -234,6 +234,7 @@ public class Structure {
         int deltaN = getDeltaN();
         Keq *= Math.pow(GasConstant.getCCAtmMolK()*p_temperature.getK(),-deltaN);
 
+        //Test commit
         return Keq;
 
       }
