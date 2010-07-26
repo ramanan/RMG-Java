@@ -166,7 +166,10 @@ public class Structure {
     public double calculateKeq(Temperature p_temperature) {
         //#[ operation calculateKeq(Temperature)
         double DG = 0;
-        for (Iterator iter = getReactants(); iter.hasNext(); ) {
+
+            String react_temp = "";
+            if (getReactantNumber()==2){
+                    for (Iterator iter = getReactants(); iter.hasNext(); ) {
 			Object o = iter.next();
 			Species spe = null;
 			if (o instanceof Species)
@@ -175,6 +178,25 @@ public class Structure {
 				ChemGraph cg = (ChemGraph)o;
 				spe = cg.getSpecies();
 			}
+                        react_temp += spe.getName();
+                }
+            
+            if (react_temp.equals("C16H33JO2") ) {
+                System.out.println("We are there");
+            }
+        }
+    
+
+       for (Iterator iter = getReactants(); iter.hasNext(); ) {
+			Object o = iter.next();
+			Species spe = null;
+			if (o instanceof Species)
+				spe = (Species)o;
+			else {
+				ChemGraph cg = (ChemGraph)o;
+				spe = cg.getSpecies();
+			}
+                System.out.println("free energy of" + spe.getName() + "=" + spe.calculateG(p_temperature));
         	DG -= spe.calculateG(p_temperature);
         }
         for (Iterator iter = getProducts(); iter.hasNext(); ) {
@@ -186,8 +208,12 @@ public class Structure {
 				ChemGraph cg = (ChemGraph)o;
 				spe = cg.getSpecies();
 			}
+
         	DG += spe.calculateG(p_temperature);
         }
+            if (p_temperature.getK()==453){
+                System.out.println("The temperature =" + p_temperature.getK());
+            }
         double Keq;
         double T = p_temperature.getStandard();
         double R = GasConstant.getKcalMolK();
@@ -224,6 +250,7 @@ public class Structure {
 				ChemGraph cg = (ChemGraph)o;
 				spe = cg.getSpecies();
 			}
+
           DG += spe.calculateGLowerBound(p_temperature);
         }
         double Keq;
@@ -234,7 +261,6 @@ public class Structure {
         int deltaN = getDeltaN();
         Keq *= Math.pow(GasConstant.getCCAtmMolK()*p_temperature.getK(),-deltaN);
 
-        //Test commit
         return Keq;
 
       }

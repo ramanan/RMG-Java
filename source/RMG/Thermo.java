@@ -103,9 +103,9 @@ public static void main(String[] args) {
         	  System.out.println("Error in reading thermo_input.txt file:\nThe first line must read 'Solvation: on/off'.");
 
           in.close();
-          thermo_output += "Name" + "\t" + "E"+ "\t" + "S"+ "\t" + "A"+ "\t" + "B"+ "\t" + "L"+ "\t" + "V" + "\t" + "UNIFAC_radius" + "\n";
-          //thermo_output += "Order of entries: Name (read from thermo_input.txt) H(T) S(T) G(T) Radius\n" +
-          //	"Units of H & G: kcal/mol\nUnits of S cal/mol/K\n" + "Units of Radius: Meter\n\n";
+          //thermo_output += "Name" + "\t" + "E"+ "\t" + "S"+ "\t" + "A"+ "\t" + "B"+ "\t" + "L"+ "\t" + "V" + "\t" + "UNIFAC_radius" + "\n";
+          thermo_output += "Order of entries: Name (read from thermo_input.txt) NASA_H(T) NASA_S(T) NASA_G(T) H(T) S(T) G(T)" +
+          	"Units of H & G: kcal/mol\nUnits of S cal/mol/K\n"; //+ "Units of Radius: Meter\n\n";
           
           Iterator iter = speciesSet.iterator();       
           while (iter.hasNext()){
@@ -113,12 +113,12 @@ public static void main(String[] args) {
         	  //thermo_output += spe.getName() + "\t" + spe.calculateH(systemTemp) + "\t" +
               //        spe.calculateS(systemTemp) + "\t" +
               //        spe.calculateG(systemTemp) + "\t" + spe.getChemGraph().getRadius() + "\n";
-             //thermo_output += spe.getName() + "\t" + spe.getChemGraph().calculateH(systemTemp) + "\t" +
-             //         spe.getChemGraph().calculateS(systemTemp) + "\t" +
-             //         spe.getChemGraph().calculateG(systemTemp) + "\t" + spe.getChemGraph().getRadius() + "\n";
-              thermo_output += spe.getName() + "\t" + spe.getChemGraph().getAbramData().E + "\t" + spe.getChemGraph().getAbramData().S + "\t" +
-                      spe.getChemGraph().getAbramData().A+ "\t" + spe.getChemGraph().getAbramData().B + "\t"
-                      + spe.getChemGraph().getAbramData().L+ "\t" + spe.getChemGraph().getAbramData().V + "\t" + spe.getChemGraph().getRadius() + "\n";
+             thermo_output += spe.getName() + "\t" + spe.getChemGraph().calculateH(systemTemp) + "\t" +
+                      spe.getChemGraph().calculateS(systemTemp) + "\t" +
+                      spe.getChemGraph().calculateG(systemTemp) + "\t" + spe.calculateH(systemTemp) + "\t" + spe.calculateS(systemTemp) + "\t" + spe.calculateG(systemTemp) + "\n"; // + spe.getChemGraph().getRadius() + "\n";
+              //thermo_output += spe.getName() + "\t" + spe.getChemGraph().getAbramData().E + "\t" + spe.getChemGraph().getAbramData().S + "\t" +
+                      //spe.getChemGraph().getAbramData().A+ "\t" + spe.getChemGraph().getAbramData().B + "\t"
+                      //+ spe.getChemGraph().getAbramData().L+ "\t" + spe.getChemGraph().getAbramData().V + "\t" + spe.getChemGraph().getRadius() + "\n";
 
           }
           

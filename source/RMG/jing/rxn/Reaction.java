@@ -238,7 +238,7 @@ public class Reaction {
 
                 keff = rate;
                 
-                setKineticsComments(getComments() + "\t" + "Diffusive limits do not apply " + "\t" + "Keq =" + calculateKeq(p_temperature),0);
+                setKineticsComments(getComments() + "\t" + "Diffusive limits do not apply " + "\t" + "Keq at T =" +p_temperature +"=\t"+ calculateKeq(p_temperature),0);
 
                 return keff;
             }
@@ -255,7 +255,7 @@ public class Reaction {
                 DiffFactor = keff/rate;
 
                 
-                setKineticsComments(getComments() + "\t"  + "Diffusion factor = " + DiffFactor + "\t" + "Keq =" + calculateKeq(p_temperature),0);
+                setKineticsComments(getComments() + "\t"  + "Diffusion factor = " + DiffFactor + "\t" + "Keq at T =" +p_temperature +"=\t"+ calculateKeq(p_temperature),0);
 
                 return keff;
             }
@@ -271,7 +271,7 @@ public class Reaction {
                     //if (!getKinetics().getComment().endsWith("Diffusion limited")){
                 DiffFactor = keff/rate;
 
-                setKineticsComments(getComments() + "\t"  + "Diffusion factor = " + DiffFactor + "\t" + "Keq =" + calculateKeq(p_temperature),0);
+                setKineticsComments(getComments() + "\t"  + "Diffusion factor = " + DiffFactor + "\t" + "Keq at T =" +p_temperature +"=\t"+ calculateKeq(p_temperature),0);
 
                 return keff;
 
@@ -291,7 +291,7 @@ public class Reaction {
                         //if (!getKinetics().getComment().endsWith("Diffusion limited")) {
                     DiffFactor = keff/rate;
                     
-                    setKineticsComments(getComments() + "\t"  + "Diffusion factor = " + DiffFactor + "\t" + "Keq =" + calculateKeq(p_temperature),0);
+                    setKineticsComments(getComments() + "\t"  + "Diffusion factor = " + DiffFactor + "\t" + "Keq at T =" +p_temperature +"=\t"+ calculateKeq(p_temperature),0);
                     
                     return keff;
                 }
@@ -305,7 +305,7 @@ public class Reaction {
                         //if (!getKinetics().getComment().endsWith("Diffusion limited")) {
                     DiffFactor = keff/rate;
                     
-                    setKineticsComments(getComments() + "\t" + "Diffusion factor = " + DiffFactor + "\t" + "Keq =" + calculateKeq(p_temperature),0);
+                    setKineticsComments(getComments() + "\t" + "Diffusion factor = " + DiffFactor + "\t" + "Keq at T =" +p_temperature +"=\t"+ calculateKeq(p_temperature),0);
 
                     return keff;
                 }
@@ -313,7 +313,12 @@ public class Reaction {
             }
 
         }
-        setKineticsComments(getComments() + "\t" + "Keq =" + calculateKeq(p_temperature),0);
+
+        if (p_temperature.getK()==453){
+        System.out.println("The temperature =" + p_temperature.getK());
+            }
+        double Keq_temp = calculateKeq(p_temperature);
+        setKineticsComments(getComments() + "\t" + "Keq at T =" +p_temperature +"=\t"+ Keq_temp,0);
       	return rate;
 
 

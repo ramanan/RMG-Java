@@ -56,7 +56,9 @@ public interface Kinetics {
     //## operation calculateRate(Temperature,double) 
     double calculateRate(Temperature temperature, double Hrxn);
 	
-	double calculateRate(Temperature temperature);
+    double calculateRate(Temperature temperature);
+
+    
     
     //## operation getA() 
     UncertainDouble getA();

@@ -473,7 +473,7 @@ public class PopulateReactions {
         		// The first reaction is not a duplicate of any previous reaction
         		if (Counter == 1) {
         			nonDuplicateRxns.add(r);
-        			listOfReactions += writeOutputString(r,rtLibrary);
+        			listOfReactions += writeOutputString(r,rtLibrary,systemTemp);
             		speciesSet.addAll(r.getProductList());
         		}
         		
@@ -497,7 +497,7 @@ public class PopulateReactions {
 	        		if (!dupRxn) {
         				nonDuplicateRxns.add(r);
         				// If Reaction is Not a Library Reaction
-        				listOfReactions += writeOutputString(r,rtLibrary);
+        				listOfReactions += writeOutputString(r,rtLibrary,systemTemp);
                 		speciesSet.addAll(r.getProductList());
 	        		}
         		}
@@ -509,7 +509,7 @@ public class PopulateReactions {
         	int i = 0;
         	while (iter_species.hasNext()) {
         		Species species = (Species)iter_species.next();
-        		listOfSpecies += species.getName()+"("+species.getID()+")\n" +
+        		listOfSpecies += species.getName()+"("+species.getID()+")\t" + species.getChemGraph().calculateG(systemTemp) + "\n" + //23JULY2010 Modified by AJ to output G along with other details of the species
         			species.getChemGraph().toStringWithoutH(i) + "\n";
         	}
         	
@@ -553,7 +553,7 @@ public class PopulateReactions {
 		fame.mkdir();
 	};
 	
-	public static String updateListOfReactions(Kinetics rxn_k, double H_rxn) {
+	public static String updateListOfReactions(Kinetics rxn_k, double H_rxn, double Keq) {
 		double Ea = 0.0;
 		if (rxn_k instanceof ArrheniusEPKinetics){
 		    Ea = ((ArrheniusEPKinetics)rxn_k).getEaValue(H_rxn);
@@ -561,18 +561,22 @@ public class PopulateReactions {
 		else{
 		    Ea = rxn_k.getEValue();
 		}
-		String output = rxn_k.getAValue() + "\t" + rxn_k.getNValue()
+
+       		String output = rxn_k.getAValue() + "\t" + rxn_k.getNValue()
 			   + "\t" + Ea + "\t" + rxn_k.getSource()
-			   + "\t" + rxn_k.getComment() 
-			   + "\tdeltaHrxn(T=298K) = " + H_rxn + " kcal/mol\n";
+			   + "\t" + rxn_k.getComment()
+			   + "\tdeltaHrxn(T=298K) = \t" + H_rxn + " kcal/mol\t" + Keq + "\n";
 		return output;
 	}
 	
-	public static String writeOutputString(Reaction r, TemplateReactionGenerator rtLibrary) {
+	public static String writeOutputString(Reaction r, TemplateReactionGenerator rtLibrary, Temperature p_temperature) {
 		String listOfReactions = "";
-
-		Temperature stdtemp = new Temperature(298,"K");
+                Temperature stdtemp = new Temperature(298,"K");
 		double Hrxn = r.calculateHrxn(stdtemp);
+
+                // 23JULY2010 Added by AJ: reports the Keq of the reaction at the temperature specifies in the input file
+                System.out.println("Solvation flag is:" + "\t" + Species.useSolvation);
+                double Keq_rxn = r.calculateKeq(p_temperature);
 		
 		// If r Reaction is from Reaction Library add it to list of reaction append its kinetics and return
         String source = r.getKineticsSource(0);
@@ -585,7 +589,7 @@ public class PopulateReactions {
     	if (reaction_type.equals("ReactionLibrary") ){
     		Kinetics[] allKinetics = r.getKinetics();
 			for (int numKinetics=0; numKinetics<allKinetics.length; ++numKinetics) {
-				listOfReactions += r.toString() + "\t" + updateListOfReactions(allKinetics[numKinetics], Hrxn);
+				listOfReactions += r.toString() + "\t" + updateListOfReactions(allKinetics[numKinetics], Hrxn, Keq_rxn);
 				if (allKinetics.length != 1) listOfReactions += "\tDUP\n";
 			}
 		return 	listOfReactions;
@@ -594,7 +598,7 @@ public class PopulateReactions {
 		if (r.isForward()) {
 			Kinetics[] allKinetics = r.getKinetics();
 			for (int numKinetics=0; numKinetics<allKinetics.length; ++numKinetics) {
-				listOfReactions += r.toString() + "\t" + updateListOfReactions(allKinetics[numKinetics], Hrxn);
+				listOfReactions += r.toString() + "\t" + updateListOfReactions(allKinetics[numKinetics], Hrxn, Keq_rxn);
 				if (allKinetics.length != 1) listOfReactions += "\tDUP\n";
 			}
 		}
@@ -614,7 +618,7 @@ public class PopulateReactions {
 				if (currentRxn.getStructure() == r.getReverseReaction().getStructure()) {
 					Kinetics[] allKinetics = currentRxn.getKinetics();
 					for (int numKinetics=0; numKinetics<allKinetics.length; ++numKinetics) {
-						listOfReactions += currentRxn.toString() + "\t" + updateListOfReactions(allKinetics[numKinetics], -Hrxn);
+						listOfReactions += currentRxn.toString() + "\t" + updateListOfReactions(allKinetics[numKinetics], -Hrxn, Keq_rxn);
 						if (allKinetics.length != 1) listOfReactions += "\tDUP\n";
 					}
 				} 
@@ -623,7 +627,7 @@ public class PopulateReactions {
 		else {
 			Kinetics[] allKinetics = r.getKinetics();
 			for (int numKinetics=0; numKinetics<allKinetics.length; ++numKinetics) {
-				listOfReactions += r.toString() + "\t" + updateListOfReactions(allKinetics[numKinetics], Hrxn);
+				listOfReactions += r.toString() + "\t" + updateListOfReactions(allKinetics[numKinetics], Hrxn, Keq_rxn);
 				if (allKinetics.length != 1) listOfReactions += "\tDUP\n";
 			}
 		}
