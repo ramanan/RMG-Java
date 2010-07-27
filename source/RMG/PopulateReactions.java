@@ -574,8 +574,44 @@ public class PopulateReactions {
                 Temperature stdtemp = new Temperature(298,"K");
 		double Hrxn = r.calculateHrxn(stdtemp);
 
+        String react_temp = "";
+        String prod_temp = "";
+
+
+            if (r.getReactantNumber()==1 && r.getProductNumber()==2){
+                    for (Iterator iter = r.getReactants(); iter.hasNext(); ) {
+                        Object o = iter.next();
+                        Species spe = null;
+                        if (o instanceof Species)
+                            spe = (Species)o;
+                        else {
+                            ChemGraph cg = (ChemGraph)o;
+                            spe = cg.getSpecies();
+                        }
+                            react_temp += spe.getName();
+                }
+
+                    for (Iterator iter = r.getProducts(); iter.hasNext(); ) {
+                        Object o = iter.next();
+                        Species spe = null;
+                        if (o instanceof Species)
+                            spe = (Species)o;
+                        else {
+                            ChemGraph cg = (ChemGraph)o;
+                            spe = cg.getSpecies();
+                        }
+                            prod_temp += spe.getName();
+                }
+            }
+
+       if (prod_temp.equals("C16H33JO2") && react_temp.equals("C16H33O2J")) {
+                System.out.println("We are there");
+            }
+
+
+
+
                 // 23JULY2010 Added by AJ: reports the Keq of the reaction at the temperature specifies in the input file
-                System.out.println("Solvation flag is:" + "\t" + Species.useSolvation);
                 double Keq_rxn = r.calculateKeq(p_temperature);
 		
 		// If r Reaction is from Reaction Library add it to list of reaction append its kinetics and return
@@ -618,7 +654,7 @@ public class PopulateReactions {
 				if (currentRxn.getStructure() == r.getReverseReaction().getStructure()) {
 					Kinetics[] allKinetics = currentRxn.getKinetics();
 					for (int numKinetics=0; numKinetics<allKinetics.length; ++numKinetics) {
-						listOfReactions += currentRxn.toString() + "\t" + updateListOfReactions(allKinetics[numKinetics], -Hrxn, Keq_rxn);
+						listOfReactions += currentRxn.toString() + "\t" + updateListOfReactions(allKinetics[numKinetics], -Hrxn, 1/Keq_rxn);
 						if (allKinetics.length != 1) listOfReactions += "\tDUP\n";
 					}
 				} 
