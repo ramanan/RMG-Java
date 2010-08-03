@@ -1,0 +1,10 @@
+//Amrit Jalan, August 1, 2010
+// ROO recombination reaction
+
+L1: ROO_rad_1
+	L2: ROO_rad_1/ch
+	L2: ROO_rad_1/ch2
+	
+L1: ROO_rad_2
+	L2: ROO_rad_2/ch
+	L2: ROO_rad_2/ch2
