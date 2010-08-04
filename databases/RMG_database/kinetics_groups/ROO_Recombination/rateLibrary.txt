@@ -4,6 +4,6 @@
 Arrhenius_EP
 
 //No.		Y_rad_1			Y_rad_2			Temp.		A		n		a		E0		DA		Dn		Da		DE0		Rank	Comments
-1.		ROO_rad_1		ROO_rad_2		300-1500	4E+7		0		0		0		0		0		0		0		0		Default
-2.		ROO_rad_1/ch2	ROO_rad_2/ch2		300-1500	4E+7		0		0		0		0		0		0		0		0		Default
-3.		ROO_rad_1/ch	ROO_rad_2/ch		300-1500	4E+7		0		0		0		0		0		0		0		0		Default
+1.		ROO_rad_1		ROO_rad_2		300-1500	4E+10		0		0		0		0		0		0		0		0		Default
+2.		ROO_rad_1/ch2	ROO_rad_2/ch2		300-1500	4E+10		0		0		0		0		0		0		0		0		Default
+3.		ROO_rad_1/ch	ROO_rad_2/ch		300-1500	4E+10		0		0		0		0		0		0		0		0		Default
