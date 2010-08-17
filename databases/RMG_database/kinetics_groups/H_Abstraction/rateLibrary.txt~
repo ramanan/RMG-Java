@@ -210,7 +210,7 @@ Arrhenius_EP
 194.	C/H2/NonDeC	CO_pri_rad			300-2500	5.4E+06		1.90	0		17.01	*3.0	0		0		0		4		Tsang [91] literature review.
 195.	C/H2/NonDeC	CO_rad/NonDe		300-2500	2.65E+06	2.00	0		16.24	*3.0	0		0		0		4		Tsang [91] literature review.
 196.	C/H2/NonDeC	O_pri_rad			295-1220	3.95E+06	1.90	0		0.16	0		0		0		0		3		Cohen et al. [101] Transition state theory.
-197.	C/H2/NonDeC	O_rad/NonDeC		300-2500	7.25E+10	0		0		4.57	*5.0	0		0		0		4		Tsang [91] literature review.
+//197.	C/H2/NonDeC	O_rad/NonDeC		300-2500	7.25E+10	0		0		4.57	*5.0	0		0		0		4		Tsang [91] literature review.
 198.	C/H/Cs3		O2b					300-2500	3.97E+13	0		0		43.92	*3.0	0		0		0		4		Tsang [92] literature review.
 199.	C/H/Cs3		O_atom_triplet		300-2500	1.57E+05	2.50	0		1.11	*2.0	0		0		0		4		Tsang [92] literature review.
 200.	C/H/Cs3		CH2_triplet			300-2500	1.09E+12	0		0		4.91	*5.0	0		0		0		4		Tsang [92] literature review.
@@ -302,7 +302,15 @@ Arrhenius_EP
 308.	H2O2	InChI=1/C4H9O/c1-3-4(2)5/h4-5H,2-3H2,1H3	600-2000	3.055E-01	3.53	0.0	1.52	0	0	0	0	3	MRH CBS-QB3 calculations w/o HR corrections
 // (Reverse) Rates for tButanol+HO2=H2O2+radicals
 309.	H2O2	InChI=1/C4H9O/c1-4(2,3)5/h5H,1H2,2-3H3		600-2000	2.100E-01	3.53	0.0	1.56	0	0	0	0	3	MRH CBS-QB3 calculations w/o HR corrections
+<<<<<<< HEAD:databases/RMG_database/kinetics_groups/H_Abstraction/rateLibrary.txt
+310.	C/H3/Cs		O_rad/NonDeO		300-1500	1E+10	0		1.1		3.05	0		0		0		0		5		Broadbelt Kinetics (HT_2)
+311.	C/H2/NonDeC	O_rad/NonDeO		300-1500	1E+10	0		1.1		3.05	0		0		0		0		5		Broadbelt Kinetics (HT_2)
+312.	C/H/Cs3		O_rad/NonDeO		300-1500	1E+10	0		1.1		3.05	0		0		0		0		5		Broadbelt Kinetics (HT_2)
+313.	C/H3/Cs		O_rad/NonDeC		300-1500	1E+10	0		0.91		11.9	0		0		0		0		5		Broadbelt Kinetics (HT_1)
+314.	C/H2/NonDeC	O_rad/NonDeC		300-1500	1E+10	0		0.91		11.9	0		0		0		0		5		Broadbelt Kinetics (HT_1)
+315.	C/H/Cs3		O_rad/NonDeC		300-1500	1E+10	0		0.91		11.9	0		0		0		0		5		Broadbelt Kinetics (HT_1)
+316.	CO/H/NonDe	O_rad/NonDeO		300-1500	1E+10	0		1		6.2	0		0		0		0		5		Broadbelt Kinetics (HT_3)
+317.	O/H/NonDeO	O_rad/NonDeO		300-1500	1E+10	0		1.5		3.3	0		0		0		0		5		Broadbelt Kinetics (HT_4)
+=======
 486.	Orad_O_H		O_rad/NonDeO	300-1500	1.75E+10	0	0	-3.275	0	0	0	0	5	[8] Curran's estimation in reaction type 13, RO2 + HO2 --> RO2H + O2
-
-// Added by AJ for autoxidation simulations
-//487.	C/H2/NonDeC	O2b					378-433	3.16E+14	0		0	43.30	0		0		0		0		5		ET Denisov, LN Denisova. Int J Chem Kinet 8:123-130, 1975 for BuCH2(CH-H)Me in benzene
+>>>>>>> f14bc1ae4ad854bdb8f8caf95b904da376cbc15f:databases/RMG_database/kinetics_groups/H_Abstraction/rateLibrary.txt

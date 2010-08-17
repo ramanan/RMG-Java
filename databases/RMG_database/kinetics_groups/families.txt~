@@ -1,0 +1,75 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+// REACTION FAMILIES USED BY RMG
+//
+// Created 2 Jun 2010 by Amrit Jalan (amrit@mit.edu)
+// Combines RMG rate rules with those of Pfaendtner and Broadbelt for liquid phase oxidation//
+// Notes:
+//
+// The name of each forward reaction should match up with a folder
+// in this directory containing the dictionary, tree, library, and adjusts
+// for that family.
+//
+// Families can be deactivated by simply changing the "on/off" column to off.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+// No.  on/off  Forward reaction                     
+1       on      Cyclic_Ether_Formation
+2       on      intra_OH_migration
+3       on      H_Abstraction
+4       on      R_Addition_MultipleBond
+5       on      R_Recombination
+6       on      Disproportionation
+<<<<<<< HEAD:databases/RMG_database/kinetics_groups/families.txt
+7       on      Disproportionation_O2d
+8       on      1,2_Insertion
+9       on      1,3_Insertion_CO2
+10      on      1,3_Insertion_ROR
+11      on      1+2_Cycloaddition
+12      on     2+2_cycloaddition_Cd
+13      on      2+2_cycloaddition_CO
+14      on      2+2_cycloaddition_CCO
+15      on      Diels_alder_addition
+16      on      intra_H_migration
+17      on      HO2_Elimination_from_PeroxyRadical
+18      on      Birad_recombination
+19      on      Oa_R_Recombination
+20      on      R_Addition_COm
+21      on      Intra_R_Add_Exocyclic
+22      on      Intra_R_Add_Endocyclic
+23      on      1,2-Birad_to_alkene
+24       off     alkoxy_beta_scission
+25       off    baeyer_villiger_reaction
+26       off      beta_scission
+27      off    bond_fission
+28      off     disproportionation_PB
+29      off     H_transfer_1
+30      off     H_transfer_3
+31      off   H_transfer_4
+32      off     H_transfer_5
+33      off      H_transfer_6
+34      on      hydroperoxide_decomposition
+35      off    O2_addition
+36      on   primary_initiation
+37      off     recombination
+38      off     H_transfer_2
+=======
+7       on      1,2_Insertion
+8       on      1,3_Insertion_CO2
+9       on      1,3_Insertion_ROR
+10      on      1+2_Cycloaddition
+11      on      2+2_cycloaddition_Cd
+12      on      2+2_cycloaddition_CO
+13      on      2+2_cycloaddition_CCO
+14      on      Diels_alder_addition
+15      on      intra_H_migration
+16      on      HO2_Elimination_from_PeroxyRadical
+17      on      Birad_recombination
+18      on      Oa_R_Recombination
+19      on      R_Addition_COm
+20      on      Intra_R_Add_Exocyclic
+21      on      Intra_R_Add_Endocyclic
+22      on      1,2-Birad_to_alkene
+23      off      Intra_Disproportionation
+>>>>>>> f14bc1ae4ad854bdb8f8caf95b904da376cbc15f:databases/RMG_database/kinetics_groups/families.txt
