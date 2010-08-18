@@ -1,0 +1,15 @@
+// Propagation steps for liquid phase oxidation of hxd. Rate obtained from Landolt-Bornstein. 
+
+Unit:
+A: mol/cm3/s
+E: kJ/mol
+
+Reactions: 
+hxd-OOJ + hxd = C16H33J1 + hxd-OOH 		8.6E+3		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J2 + hxd-OOH		8.6E+3		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J3 + hxd-OOH 		8.6E+3		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J4 + hxd-OOH 		8.6E+3		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J5 + hxd-OOH 		8.6E+3		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J6 + hxd-OOH 		8.6E+3		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J7 + hxd-OOH 		8.6E+3		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J8 + hxd-OOH 		8.6E+3		0.0		67		0.0	0.0	0.0
