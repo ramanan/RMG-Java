@@ -9,5 +9,5 @@ oct-OOJ + oct = C8H17J1 + oct-OOH 				3.98E+11		0.0		16.03		0.0	0.0	0.0
 oct-OOJ + oct = C8H17J2 + oct-OOH 				3.98E+11		0.0		16.03		0.0	0.0	0.0
 oct-OOJ + oct = C8H17J3 + oct-OOH 				3.98E+11		0.0		16.03		0.0	0.0	0.0
 oct-OOJ + oct = C8H17J4 + oct-OOH 				3.98E+11		0.0		16.03		0.0	0.0	0.0
-C8H17OJ + HOJ = oct-OOH 						1.26E+16		0.0		46.17		0.0 0.0 0.0
+oct-OOH = C8H17OJ + HO 						1.26E+16		0.0		46.17		0.0  	0.0 0.0
 //oct-OOJ + oct-OOJ = O2 + C8H16O + C8H18O 		5.00E+12		0.0		19.98		0.0	0.0	0.0
