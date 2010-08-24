@@ -1,0 +1,26 @@
+// Propagation steps for liquid phase oxidation of hxd. Rates obtained from Landolt-Bornstein. 
+
+Unit:
+A: mol/cm3/s
+E: kJ/mol
+
+Reactions: 
+hxd-OOJ + hxd = C16H33J1 + hxd-OOH 				3.98E+11		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J2 + hxd-OOH				3.98E+11		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J3 + hxd-OOH 				3.98E+11		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J4 + hxd-OOH 				3.98E+11		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J5 + hxd-OOH 				3.98E+11		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J6 + hxd-OOH 				3.98E+11		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J7 + hxd-OOH 				3.98E+11		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd = C16H33J8 + hxd-OOH 				3.98E+11		0.0		67		0.0	0.0	0.0
+hxd-OOJ + hxd-OOJ = O2 + C16H32O + C16H34O 		5.00E+12		0.0		19.98	0.0	0.0	0.0
+C16H33OJ + HOJ = hxd-OOH 						2.000E13		0.0		0.0		0.0 0.0 0.0
+hxd + O2 = C16H33J1 + HO2J						3.176E14		0.0		47.69	0.0 0.0 0.0
+hxd + O2 = C16H33J2 + HO2J						3.176E14		0.0		47.69	0.0 0.0 0.0
+hxd + O2 = C16H33J3 + HO2J						3.176E14		0.0		47.69	0.0 0.0 0.0
+hxd + O2 = C16H33J4 + HO2J						3.176E14		0.0		47.69	0.0 0.0 0.0
+hxd + O2 = C16H33J5 + HO2J						3.176E14		0.0		47.69	0.0 0.0 0.0
+hxd + O2 = C16H33J6 + HO2J						3.176E14		0.0		47.69	0.0 0.0 0.0
+hxd + O2 = C16H33J7 + HO2J						3.176E14		0.0		47.69	0.0 0.0 0.0
+hxd + O2 = C16H33J8 + HO2J						3.176E14		0.0		47.69	0.0 0.0 0.0
+O2 + C16H33J3 = C16H33O2J						7.540E12		0.0		0.0		0.0 0.0 0.0	

@@ -103,7 +103,7 @@ public static void main(String[] args) {
         	  System.out.println("Error in reading thermo_input.txt file:\nThe first line must read 'Solvation: on/off'.");
 
           in.close();
-          thermo_output += "Name" + "\t" + "E"+ "\t" + "S"+ "\t" + "A"+ "\t" + "B"+ "\t" + "L"+ "\t" + "V" + "\t" + "UNIFAC_radius" + "\n";
+          //thermo_output += "Name" + "\t" + "E"+ "\t" + "S"+ "\t" + "A"+ "\t" + "B"+ "\t" + "L"+ "\t" + "V" + "\t" + "UNIFAC_radius" + "\n";
           //thermo_output += "Order of entries: Name (read from thermo_input.txt) H(T) S(T) G(T) Radius\n" +
           //	"Units of H & G: kcal/mol\nUnits of S cal/mol/K\n" + "Units of Radius: Meter\n\n";
           
@@ -116,9 +116,17 @@ public static void main(String[] args) {
              //thermo_output += spe.getName() + "\t" + spe.getChemGraph().calculateH(systemTemp) + "\t" +
              //         spe.getChemGraph().calculateS(systemTemp) + "\t" +
              //         spe.getChemGraph().calculateG(systemTemp) + "\t" + spe.getChemGraph().getRadius() + "\n";
-              thermo_output += spe.getName() + "\t" + spe.getChemGraph().getAbramData().E + "\t" + spe.getChemGraph().getAbramData().S + "\t" +
-                      spe.getChemGraph().getAbramData().A+ "\t" + spe.getChemGraph().getAbramData().B + "\t"
-                      + spe.getChemGraph().getAbramData().L+ "\t" + spe.getChemGraph().getAbramData().V + "\t" + spe.getChemGraph().getRadius() + "\n";
+             // thermo_output += spe.getName() + "\t" + spe.getChemGraph().getAbramData().E + "\t" + spe.getChemGraph().getAbramData().S + "\t" +
+             //         spe.getChemGraph().getAbramData().A+ "\t" + spe.getChemGraph().getAbramData().B + "\t"
+             //         + spe.getChemGraph().getAbramData().L+ "\t" + spe.getChemGraph().getAbramData().V + "\t" + spe.getChemGraph().getRadius() + "\n";
+            double A = spe.getChemGraph().getAbramData().A;
+            double B = spe.getChemGraph().getAbramData().B;
+            double E = spe.getChemGraph().getAbramData().E;
+            double S = spe.getChemGraph().getAbramData().S;
+            double L = spe.getChemGraph().getAbramData().L;
+
+            double logK = -0.007 +(-0.595*E)+(2.461*S)+(2.085*A)+(0.418*B)+(0.738*L);
+            thermo_output += spe.getName() + "\t" + logK + "\n";
 
           }
           
