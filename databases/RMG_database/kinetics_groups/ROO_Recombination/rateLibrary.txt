@@ -4,6 +4,9 @@
 Arrhenius_EP
 
 //No.		Y_rad_1			Y_rad_2			Temp.		A			n		a		E0		DA		Dn		Da		DE0		Rank	Comments
-1.		ROO_rad_1			ROO_rad_2		300-1500	1.26E+12	0		0		5.29		0		0		0		0		0		Default
-2.		ROO_rad_1/ch2	ROO_rad_2/ch2		300-1500	1.26E+12	0		0		5.29		0		0		0		0		0		Default
-3.		ROO_rad_1/ch	ROO_rad_2/ch		283-356		1.26E+12	0		0		5.29		0		0		0		0		0		Default
+//1.		ROO_rad_1			ROO_rad_2		300-1500	1.26E+12	0		0		5.29		0		0		0		0		0		Obtained from Landolt Bornstein
+//2.		ROO_rad_1/ch2	ROO_rad_2/ch2		300-1500	1.26E+12	0		0		5.29		0		0		0		0		0		Obtained from Landolt Bornstein
+//3.		ROO_rad_1/ch	ROO_rad_2/ch		283-356		1.26E+12	0		0		5.29		0		0		0		0		0		Obtained from Landolt Bornstein
+1.		ROO_rad_1			ROO_rad_2		300-1500	1.8E+12	0		0		2.98		0		0		0		0		0		Value used by Korcek in calculation of Kp 
+2.		ROO_rad_1/ch2	ROO_rad_2/ch2		300-1500	1.8E+12	0		0		2.98		0		0		0		0		0		Value used by Korcek in calculation of Kp
+3.		ROO_rad_1/ch	ROO_rad_2/ch		283-356		1.8E+12	0		0		2.98		0		0		0		0		0		Value used by Korcek in calculation of Kp
