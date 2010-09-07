@@ -1255,7 +1255,7 @@ public class Reaction {
       //#[ operation makeReaction(Structure,Kinetics,boolean)
       if (!p_structure.repOk()) throw new InvalidStructureException(p_structure.toChemkinString(false).toString());
       for (int numKinetics=0; numKinetics<p_kinetics.length; numKinetics++) {
-    	  if (!p_kinetics[numKinetics].repOk()) throw new InvalidKineticsException(p_kinetics[numKinetics].toString());
+    	 // if (!p_kinetics[numKinetics].repOk()) throw new InvalidKineticsException(p_kinetics[numKinetics].toString());
       }
 
 
