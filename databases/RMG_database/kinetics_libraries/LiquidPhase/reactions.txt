@@ -1,4 +1,4 @@
-// Propagation steps for liquid phase oxidation of hxd. Rates obtained from Landolt-Bornstein. 
+// Propagation steps for liquid phase oxidation of hxd. Rates obtained from Landolt-Bornstein, Korcek experiments and Denisov. 
 
 Unit:
 A: mol/cm3/s
