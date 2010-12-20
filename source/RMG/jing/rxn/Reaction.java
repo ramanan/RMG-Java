@@ -79,7 +79,8 @@ public class Reaction {
   
   protected boolean kineticsFromPrimaryKineticLibrary = false;
   protected ReactionTemplate rxnTemplate;
-  // Constructors
+
+    // Constructors
 
   //## operation Reaction()
   public  Reaction() {
@@ -179,6 +180,7 @@ public class Reaction {
   	double rate =0;
 	Temperature stdtemp = new Temperature(298,"K");
 	double Hrxn = calculateHrxn(stdtemp);
+    Temperature sys_temp = ReactionModelGenerator.getTemp4BestKinetics();
 
     /* AJ 12JULY2010:
      * Added diffusive limits from previous RMG version by replacing function calculateTotalRate
@@ -274,9 +276,9 @@ public class Reaction {
                 solv_correction = Math.pow(10, log_correction);
                 rate *= solv_correction;
 
+                if (p_temperature.getK()==sys_temp.getK()){
                 setKineticsComments(getComments() + "\t"  + "Solvent factor = " + solv_correction + "\t" + "rate=" + rate,0);
-                
-
+                }                
             }
 
 		}
@@ -298,7 +300,11 @@ public class Reaction {
             if (numReacts == 1 && numProds == 1) {
                 keff = rate;
                 rate = keff;
-                setKineticsComments(k_All[0].getComment() + "\t" + "Diffusive limits do not apply " + "\t" + "rate=" + rate + "\t" + "Keq =" + calculateKeq(p_temperature),0);
+
+                // Add comments only if the temperature at which the function has been called corresponds to the system temperature specified in the condition file
+                if (p_temperature.getK()==sys_temp.getK()){
+                setKineticsComments(k_All[0].getComment() + "\t" + "Diffusive limits do not apply " + "\t" + "rate=" + rate + "\t" + "Keq =" + calculateKeq(p_temperature) + "\t" + "Temperature=" + p_temperature,0);
+                }
                                 
             }
             else if (numReacts == 1 && numProds == 2) {
@@ -312,7 +318,9 @@ public class Reaction {
                 DiffFactor = keff/rate;
                 rate = keff;
 
-                setKineticsComments(k_All[0].getComment() + "\t" + "Diffusion factor = " + DiffFactor + "\t" + "rate=" + rate  + "\t" + "Keq =" + calculateKeq(p_temperature),0);
+                if (p_temperature.getK()==sys_temp.getK()){
+                setKineticsComments(k_All[0].getComment() + "\t" + "Diffusion factor = " + DiffFactor + "\t" + "rate=" + rate  + "\t" + "Keq =" + calculateKeq(p_temperature) + "\t" + "Temperature=" + p_temperature,0);
+                }
                                 
             }
             else if (numReacts == 2 && numProds == 1) {
@@ -325,13 +333,16 @@ public class Reaction {
                 keff = k_forw_eff;
                 DiffFactor = keff/rate;
                 rate = keff;
-                
-                setKineticsComments(k_All[0].getComment() + "\t" + "Diffusion factor = " + DiffFactor + "\t" + "rate=" + rate + "\t" + "Keq =" + calculateKeq(p_temperature),0);
-                              
+
+                if (p_temperature.getK()==sys_temp.getK()){
+                setKineticsComments(k_All[0].getComment() + "\t" + "Diffusion factor = " + DiffFactor + "\t" + "rate=" + rate + "\t" + "Keq =" + calculateKeq(p_temperature) + "\t" + "Temperature=" + p_temperature,0);
+                }
+                            
 
             }
             else if (numReacts == 2 && numProds == 2) {
-                
+
+                double rxn_Keq = structure.calculateKeq(p_temperature);
                 double deltaHrxn = structure.calculateHrxn(p_temperature);
 
                 if (deltaHrxn<0){   // Forward reaction is exothermic hence the corresponding diffusion limit applies
@@ -342,9 +353,10 @@ public class Reaction {
                     keff = k_forw_eff;
                     DiffFactor = keff/rate;
                     rate = keff;
-                    
-                    setKineticsComments(k_All[0].getComment() + "\t" + "Diffusion factor = "  + DiffFactor + "\t" + "rate=" + rate + "\t" + "Keq =" + calculateKeq(p_temperature),0);
-                       
+
+                    if (p_temperature.getK()==sys_temp.getK()){
+                    setKineticsComments(k_All[0].getComment() + "\t" + "Diffusion factor = "  + DiffFactor + "\t" + "rate=" + rate + "\t" + "Keq =" + calculateKeq(p_temperature) + "\t" + "Temperature=" + p_temperature,0);
+                    }
                     
                 }
                 else if (deltaHrxn>0){ // Reverse reaction is exothermic and the corresponding diffusion limit should be used
@@ -356,9 +368,10 @@ public class Reaction {
                     DiffFactor = keff/rate;
                     rate = keff;
 
-                    String P = k_All[0].getComment();
-                    setKineticsComments(k_All[0].getComment() + "\t" + "Diffusion factor = " + DiffFactor + "\t" + "rate=" + rate + "\t" + "Keq =" + calculateKeq(p_temperature),0);
-                                        
+                    if (p_temperature.getK()==sys_temp.getK()){
+                    setKineticsComments(k_All[0].getComment() + "\t" + "Diffusion factor = " + DiffFactor + "\t" + "rate=" + rate + "\t" + "Keq =" + calculateKeq(p_temperature) + "\t" + "Temperature=" + p_temperature,0);
+                    }
+                                       
                 }
 
             }
@@ -373,7 +386,9 @@ public class Reaction {
                 DiffFactor = keff/rate;
                 rate = keff;
 
-                setKineticsComments(getComments() + "\t"  + "Diffusion factor = " + DiffFactor + "\t" + "rate=" + rate  + "\t" + "Keq =" + calculateKeq(p_temperature),0);
+                if (p_temperature.getK()==sys_temp.getK()){
+                setKineticsComments(getComments() + "\t"  + "Diffusion factor = " + DiffFactor + "\t" + "rate=" + rate  + "\t" + "Keq =" + calculateKeq(p_temperature) + "\t" + "Temperature=" + p_temperature,0);
+                }
                                 
             }
 
