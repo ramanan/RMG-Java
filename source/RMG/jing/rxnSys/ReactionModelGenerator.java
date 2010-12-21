@@ -104,6 +104,9 @@ public class ReactionModelGenerator {
     protected SeedMechanism seedMechanism = null;
     protected PrimaryThermoLibrary primaryThermoLibrary;
     protected PrimaryTransportLibrary primaryTransportLibrary;
+
+    //Added by AJ on December 21, 2010
+    protected PrimaryAbrahamLibrary primaryAbrahamLibrary;
 	
 	protected boolean readrestart = false;
 	protected boolean writerestart = false;
@@ -433,6 +436,8 @@ public class ReactionModelGenerator {
         		if (solvationOnOff.equals("on")) {
         			setUseSolvation(true);
                     Species.useSolvation = true;
+                    readAndMakePAL(reader);
+
         		} else if (solvationOnOff.equals("off")) {
                     setUseSolvation(false);
         			Species.useSolvation = false;
@@ -5114,6 +5119,17 @@ public class ReactionModelGenerator {
      	}
      	if (numPTLs == 0) setPrimaryTransportLibrary(null);
     }
+
+    //Added by Amrit Jalan on December 21, 2010
+    public void readAndMakePAL(BufferedReader reader) {
+     	
+     		String name = "primaryAbrahamLibrary";
+			String path = "primaryAbrahamLibrary";
+
+            setPrimaryAbrahamLibrary(new PrimaryAbrahamLibrary(name,path));
+           	getPrimaryAbrahamLibrary().appendPrimaryAbrahamLibrary(name,path);
+                 	
+    }
     
     public PrimaryTransportLibrary getPrimaryTransportLibrary() {
     	return primaryTransportLibrary;
@@ -5121,6 +5137,15 @@ public class ReactionModelGenerator {
     
     public void setPrimaryTransportLibrary(PrimaryTransportLibrary p_primaryTransportLibrary) {
     	primaryTransportLibrary = p_primaryTransportLibrary;
+    }
+
+    
+    public PrimaryAbrahamLibrary getPrimaryAbrahamLibrary() {
+    	return primaryAbrahamLibrary;
+    }
+
+    public void setPrimaryAbrahamLibrary(PrimaryAbrahamLibrary p_primaryAbrahamLibrary) {
+    	primaryAbrahamLibrary = p_primaryAbrahamLibrary;
     }
 
 	/**
