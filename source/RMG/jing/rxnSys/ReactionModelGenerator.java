@@ -107,6 +107,8 @@ public class ReactionModelGenerator {
 
     //Added by AJ on December 21, 2010
     protected PrimaryAbrahamLibrary primaryAbrahamLibrary;
+    protected static SolventData solvent;
+    protected SolventLibrary solventLibrary;
 	
 	protected boolean readrestart = false;
 	protected boolean writerestart = false;
@@ -433,12 +435,15 @@ public class ReactionModelGenerator {
         		StringTokenizer st = new StringTokenizer(line);
         		String name = st.nextToken();
         		String solvationOnOff = st.nextToken().toLowerCase();
-        		if (solvationOnOff.equals("on")) {
+        		if (solvationOnOff.startsWith("on")) {
         			setUseSolvation(true);
                     Species.useSolvation = true;
-                    readAndMakePAL(reader);
-
-        		} else if (solvationOnOff.equals("off")) {
+                    readAndMakePAL();
+                    Integer hash_int = solvationOnOff.indexOf("/");
+                    String solventname = solvationOnOff.substring(hash_int+1);
+                    readAndMakeSL(solventname);
+                   
+        		} else if (solvationOnOff.startsWith("off")) {
                     setUseSolvation(false);
         			Species.useSolvation = false;
         		}
@@ -5121,7 +5126,7 @@ public class ReactionModelGenerator {
     }
 
     //Added by Amrit Jalan on December 21, 2010
-    public void readAndMakePAL(BufferedReader reader) {
+    public void readAndMakePAL() {
      	
      		String name = "primaryAbrahamLibrary";
 			String path = "primaryAbrahamLibrary";
@@ -5130,7 +5135,18 @@ public class ReactionModelGenerator {
            	getPrimaryAbrahamLibrary().appendPrimaryAbrahamLibrary(name,path);
                  	
     }
-    
+
+    public void readAndMakeSL(String solventname) {
+
+     		String name = "SolventLibrary";
+			String path = "SolventLibrary";
+
+            setSolventLibrary(new SolventLibrary(name,path));
+            getSolventLibrary().readSolventLibrary(name,path);
+            setSolvent(new SolventData(solventname));
+    }
+
+   
     public PrimaryTransportLibrary getPrimaryTransportLibrary() {
     	return primaryTransportLibrary;
     }
@@ -5143,10 +5159,26 @@ public class ReactionModelGenerator {
     public PrimaryAbrahamLibrary getPrimaryAbrahamLibrary() {
     	return primaryAbrahamLibrary;
     }
+    
+    public static SolventData getSolvent() {
+    	return solvent;
+    }
+
+    public SolventLibrary getSolventLibrary() {
+    	return solventLibrary;
+    }
 
     public void setPrimaryAbrahamLibrary(PrimaryAbrahamLibrary p_primaryAbrahamLibrary) {
     	primaryAbrahamLibrary = p_primaryAbrahamLibrary;
     }
+
+    public void setSolventLibrary(SolventLibrary p_solventLibrary) {
+    	solventLibrary = p_solventLibrary;
+    }
+
+    public void setSolvent(SolventData p_solvent) {
+    	solvent = p_solvent;
+        }
 
 	/**
 	 * Print the current numbers of core and edge species and reactions to the

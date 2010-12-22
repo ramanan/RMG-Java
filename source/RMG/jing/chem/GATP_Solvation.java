@@ -34,6 +34,7 @@ import jing.param.*;
 import jing.chemUtil.*;
 import jing.mathTool.*;
 import jing.param.Temperature;
+import jing.rxnSys.*;
 
 public class GATP_Solvation implements GeneralSolvationGAPP {
 	
@@ -72,6 +73,7 @@ public class GATP_Solvation implements GeneralSolvationGAPP {
 		// Generation of Abraham Solute Parameters
 		AbramData result_Abraham= new AbramData();
 		result_Abraham= p_chemGraph.getAbramData();
+        ReactionModelGenerator rmg = new ReactionModelGenerator();
 
 		// Solute descriptors from the Abraham Model
 		double S=result_Abraham.S;
@@ -81,23 +83,14 @@ public class GATP_Solvation implements GeneralSolvationGAPP {
 		double A=result_Abraham.A;
         double V=result_Abraham.V;
 		
-////        Manually specified solvent descriptors for free energy calculation
-//		 (constants here are for dry decane, from from M.H. Abraham et al. / J. Chromatogr. A 1037 (2004) 29–47 )
-//        double c_g = 0.156;
-//        double s_g = 0;
-//        double b_g = 0;
-//        double e_g = -0.143;
-//        double l_g = 0.989;
-//        double a_g = 0;
-
-        //Manually specified solvent descriptors for free energy calculation
-		// (constants here are for octanol, from from M.H. Abraham et al. / J. Chromatogr. A 1037 (2004) 29–47 )
-        double c_g = -0.12;
-        double e_g = -0.203;
-        double s_g = 0.56;
-        double a_g = 3.56;
-        double b_g = 0.702;
-        double l_g = 0.939;
+        String solventname = ReactionModelGenerator.getSolvent().name;
+        SolventData solvent = SolventLibrary.getSolventData(solventname);
+        double c_g = solvent.c_g;
+        double e_g = solvent.e_g;
+        double s_g = solvent.s_g;
+        double a_g = solvent.a_g;
+        double b_g = solvent.b_g;
+        double l_g = solvent.l_g;
 
 		double logK = c_g + s_g*S + b_g*B + e_g*E + l_g*L + a_g*A;    // Implementation of Abraham Model for calculation of partition coefficient
         double deltaG0 = -8.314*298*2.303*logK;                             // J/mol
@@ -107,23 +100,12 @@ public class GATP_Solvation implements GeneralSolvationGAPP {
     /* AJ 16JULY 2010 (Mintz method for calculation of solution phase enthalpy
      */
 
-////         Manually specified solvent descriptors for enthalpy calculations
-////		 (constants here are for alkanes, from from C. Mintz et al. / J. Chromatogr. A 1037 (2004) 29–47 )
-//        double c_h = -6.708;
-//        double s_h = 0;
-//        double b_h = 0;
-//        double e_h = 2.999;
-//        double l_h = -9.279;
-//        double a_h = 0;
-
-//         Manually specified solvent descriptors for enthalpy calculations
-//		 (constants here are for 1-octanol, from from C. Mintz et al. / QSAR & Combinatorial Science Volume 27, Issue 5, pages 627–635, May 2008 )
-        double c_h = -6.49;
-        double e_h = -1.04;
-        double s_h = 5.89;
-        double a_h = -53.99;
-        double b_h = -8.99;
-        double l_h = -9.18;
+        double c_h = solvent.c_h;
+        double e_h = solvent.e_h;
+        double s_h = solvent.s_h;
+        double a_h = solvent.a_h;
+        double b_h = solvent.b_h;
+        double l_h = solvent.l_h;
 
         double deltaH0 = c_g + s_g*S + b_g*B + e_g*E + l_g*L + a_g*A;    // Implementation of Mintz model for calculation of solution phase enthalpy (kJ/mol)
         deltaH0=deltaH0/4.18;                                            // Conversion from kJ/mol to kcal/mol
