@@ -243,7 +243,9 @@ public class Reaction {
             if (RxnFamily.equals("H_Abstraction")){
                 double solv_correction;
                 double A_XH = 0;
-                double B_solvent = 0.45;
+                String solventname = ReactionModelGenerator.getSolvent().name;
+                SolventData solvent = SolventLibrary.getSolventData(solventname);
+                double B_solvent = solvent.B;
 
                 // Get the list of reactants for H_Abstraction
                 LinkedList react_list = getReactantList();
