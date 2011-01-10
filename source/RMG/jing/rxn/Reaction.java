@@ -347,7 +347,7 @@ public class Reaction {
                 double rxn_Keq = structure.calculateKeq(p_temperature);
                 double deltaHrxn = structure.calculateHrxn(p_temperature);
 
-                if (deltaHrxn<0){   // Forward reaction is exothermic hence the corresponding diffusion limit applies
+                if (rxn_Keq>1){   // Forward reaction is exothermic hence the corresponding diffusion limit applies
                     double k_forw = rate;
                     LinkedList reactantsInForwRxn = structure.reactants;
                     double k_forw_diff = calculatediff(reactantsInForwRxn);
@@ -361,7 +361,7 @@ public class Reaction {
                     }
                     
                 }
-                else if (deltaHrxn>0){ // Reverse reaction is exothermic and the corresponding diffusion limit should be used
+                else if (rxn_Keq<1){ // Reverse reaction is exothermic and the corresponding diffusion limit should be used
                     double k_back = rate / calculateKeq(p_temperature);
                     LinkedList reactantsInBackRxn = structure.products;
                     double k_back_diff= calculatediff(reactantsInBackRxn);
