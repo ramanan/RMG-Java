@@ -1,0 +1,11 @@
+// Seed Mechanism for tetralin oxidation
+
+Unit:
+A: mol/cm3/s
+E: kcal/mol
+
+Reactions:
+
+//Initiation reactions ROOH = ROJ + HOJ
+tetOJ1 + HOJ = tetOOH1		1.999999999999997E13	0.0	0.0	0.0	0.0	0.0
+
