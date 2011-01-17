@@ -91,8 +91,10 @@ public class CheckForwardAndReverseRateCoefficients {
 			// next line should have kinetic info
 			line = ChemParser.readMeaningfulLine(br_thermodat, true);
 			while (line != null && !line.equals("END")) {
+				boolean reversible = true;
 				if (!line.startsWith("!")&& !line.toLowerCase().contains("low") && !line.toLowerCase().contains("troe") && !line.toLowerCase().contains("dup") && !line.toLowerCase().contains("plog") && !line.contains("CHEB")) {
 					String rxnString = "";
+					String fullRxnString = line;
 					int[] reactsIndex = new int[3];
 					int[] prodsIndex = new int[3];
 					String shortRxnString = "";
@@ -162,11 +164,13 @@ public class CheckForwardAndReverseRateCoefficients {
 						for (int k=0; k<T.length; k++) {
 							output += logk[k] + "\t";
 						}
-						System.out.println(output + rxnString);
-//						for (int k=0; k<T.length; k++) {
-//							if (logk[k] > 20 && numR==1) System.out.println("logkf > 20 at T=" + T[k] + "K for " + rxnString);
-//							else if (logk[k] > 30) System.out.println("logkf > 30 at T=" + T[k] + "K for " + rxnString);
-//						}
+//						System.out.println(output + rxnString);
+						for (int k=0; k<T.length; k++) {
+							if (logk[k] > 20 && numR==1) 
+								System.out.format("logkf = %4.2f at T = %4.0fK for %s\n", logk[k], T[k], fullRxnString);
+							else if (logk[k] > 20) 
+								System.out.format("logkf = %4.2f at T = %4.0fK for %s\n", logk[k], T[k], fullRxnString);
+						}
 					}
 					else if (line.contains("(+m)")) {
 						shortRxnString = line;
@@ -207,6 +211,7 @@ public class CheckForwardAndReverseRateCoefficients {
 						shortRxnString = line;
 						st = new StringTokenizer(line);
 						shortRxnString = st.nextToken();
+						if (shortRxnString.contains("=>")) reversible = false;
 						A = Double.parseDouble(st.nextToken());
 						n = Double.parseDouble(st.nextToken());
 						E = Double.parseDouble(st.nextToken());
@@ -215,12 +220,14 @@ public class CheckForwardAndReverseRateCoefficients {
 							logk[k] = Math.log10(A * Math.pow(T[k],n) * Math.exp(-E/R/T[k]));
 							output += logk[k] + "\t";
 						}
-						System.out.println(output + shortRxnString);
-//						for (int k=0; k<T.length; k++) {
-//							logk[k] = Math.log10(A * Math.pow(T[k],n) * Math.exp(-E/R/T[k]));
-//							if (logk[k] > 20 && numR==1) System.out.println("logkf > 20 at T=" + T[k] + "K for " + shortRxnString);
-//							else if (logk[k] > 30) System.out.println("logkf > 30 at T=" + T[k] + "K for " + shortRxnString);
-//						}
+//						System.out.println(output + shortRxnString);
+						for (int k=0; k<T.length; k++) {
+							logk[k] = Math.log10(A * Math.pow(T[k],n) * Math.exp(-E/R/T[k]));
+							if (logk[k] > 20 && numR==1) 
+								System.out.format("logkf = %4.2f at T = %4.0fK for %s\n", logk[k], T[k], fullRxnString);
+							else if (logk[k] > 20) 
+								System.out.format("logkf = %4.2f at T = %4.0fK for %s\n", logk[k], T[k], fullRxnString);
+						}
 						String[] reactsANDprods = shortRxnString.split("=");
 						// Determine the reactants
 						reactsIndex = determineSpeciesIndex(reactsANDprods[0]);
@@ -267,8 +274,12 @@ public class CheckForwardAndReverseRateCoefficients {
 										coeffs[prodsIndex[numProds]][coeffsCounter+13];
 							}
 							logKeq[iii] = Math.log10(Math.exp(1))*(-H_RT + S_R) + (numP-numR)*Math.log10(1.0/82.06/Temperature);
-//							if (logk[iii] - logKeq[iii] > 20 && numP==1) System.out.println("logkr > 20 at T=" + T[iii] + "K for " + shortRxnString);
-//							else if (logk[iii] - logKeq[iii] > 30) System.out.println("logkr > 30 at T=" + T[iii] + "K for " + shortRxnString);
+							if (reversible) {
+								if (logk[iii] - logKeq[iii] > 20 && numP==1) 
+									System.out.format("logkr = %4.2f at T = %4.0fK for %s\n", (logk[iii]-logKeq[iii]), T[iii], fullRxnString);
+								else if (logk[iii] - logKeq[iii] > 20) 
+									System.out.format("logkr = %4.2f at T = %4.0fK for %s\n", (logk[iii]-logKeq[iii]), T[iii], fullRxnString);
+							}
 							// Check if Ea is sensible
 //							if (rmgRate && iii==T.length-1) {
 //								double deltaHrxn = H_RT * R * T[iii];
@@ -281,7 +292,7 @@ public class CheckForwardAndReverseRateCoefficients {
 						for (int iii=0; iii<T.length; iii++) {
 							output += (logk[iii] - logKeq[iii]) + "\t";
 						}
-						System.out.println(output + shortRxnString);
+//						System.out.println(output + shortRxnString);
 					}
 				}
 				line = ChemParser.readMeaningfulLine(br_thermodat, true);
@@ -355,6 +366,7 @@ public class CheckForwardAndReverseRateCoefficients {
 	}
 	
 	public static double[][] computephi(double[] argumentX, int maxCounter) {
+		if (argumentX[0] > 1.0) argumentX[0] = 1.0;
 		double[][] phi = new double[maxCounter][argumentX.length];
 		for (int j=0; j<argumentX.length; j++) {
 			for (int i=0; i<maxCounter; i++) {
