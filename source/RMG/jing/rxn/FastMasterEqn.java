@@ -332,15 +332,15 @@ public class FastMasterEqn implements PDepKineticsEstimator {
 			String[] command = {dir + "/bin/fame.exe"};
            	File runningDir = new File("fame/");
 			Process fame = Runtime.getRuntime().exec(command, null, runningDir);
-
+			if (fame == null) throw new PDepException("Couldn't start FAME process.");
+			
             BufferedReader stdout = new BufferedReader(new InputStreamReader(fame.getInputStream()));
             BufferedReader stderr = new BufferedReader(new InputStreamReader(fame.getErrorStream()));
 			PrintStream stdin = new PrintStream(  new BufferedOutputStream( fame.getOutputStream(), 1024), true);
-
 			stdin.print( input );
 			stdin.flush();
 			if (stdin.checkError()) { // Flush the stream and check its error state.
-				System.out.println("ERROR sending input to fame.exe!!");
+				System.out.println("ERROR sending input to fame.exe");
 			}
 			stdin.close();
 			
@@ -357,13 +357,18 @@ public class FastMasterEqn implements PDepKineticsEstimator {
 				throw new PDepException("FAME reported an error; FAME job was likely unsuccessful.");
 			}
 			
+			/* 
+			 This was useful when FAME output started with a bunch of #IN and #DEBUG lines
+			 but now such information appears in fame.log
 			// advance to first line that's not for debug purposes
 			while ( line.startsWith("#IN:") || line.contains("#DEBUG:") ) {
 				//output.append(line).append("\n");
 				line = stdout.readLine().trim();
 			}
+			*/
 			
-            if (!line.startsWith("#####")) { // correct output begins with ######...
+            if (!line.startsWith("#####")) { // Output looks like an error.
+				// correct output begins with ######...
 			    // erroneous output does not begin with ######...
                 // Print FAME stdout and error
 				System.out.println("FAME Error::");
@@ -376,7 +381,7 @@ public class FastMasterEqn implements PDepKineticsEstimator {
 				// clean up i/o streams (we may be trying again with ModifiedStrongCollision and carrying on)
 				stdout.close();
 				stderr.close();
-                throw new Exception();
+                throw new PDepException("Fame output looks like an error occurred.");
             }
 
 			// Clean up i/o streams
@@ -404,12 +409,16 @@ public class FastMasterEqn implements PDepKineticsEstimator {
 				//	System.out.println("Running Time is: " + String.valueOf((System.currentTimeMillis())/1000/60) + " minutes after running fame.");
 				// }
 			}
+			stdout.close(); // close all output streams so the fame process terminates and we get past the following line:
 			int exitValue = fame.waitFor();
         }
         catch (Exception e) {
 			e.printStackTrace();
-			
         	System.out.println(e.getMessage());
+			if (e.getCause() == null){
+				System.out.println("No cause for this exception! Could be because of insufficient memory,");
+				System.out.println("and not actually a problem with FAME or the input files!! Try pruning.");
+			}
 			// Save bad input to file
             try {
                 FileWriter fw = new FileWriter(new File("fame/" + Integer.toString(pdn.getID()) + "_input.txt"));
@@ -452,7 +461,8 @@ public class FastMasterEqn implements PDepKineticsEstimator {
          * 	reset to 251 (which was the standard before)
          */
         while (!pdepRatesOK) {
-        	numGrains = numGrains + 200;
+        	// runPDepCalculation will increase numGrains if it is going to set pdepRatesOK=false.
+			// and will set pdepRatesOK=true if numGrains > 1000.
         	runPDepCalculation(pdn, rxnSystem, cerm);
         }
         numGrains = 251;
@@ -759,6 +769,7 @@ public class FastMasterEqn implements PDepKineticsEstimator {
 	/**
 	 * Parses a FAME output file and updates the reaction network and system
 	 * accordingly.
+	 * @param br The BufferedReader containing the stream that is to be parsed. THIS IS LEFT OPEN. 
 	 * @param pdn The pressure-dependent reaction network of interest
 	 * @param rxnSystem The reaction system of interest
 	 * @param cerm The current core/edge reaction model
@@ -994,25 +1005,15 @@ public class FastMasterEqn implements PDepKineticsEstimator {
 						}
 						if (ReactionModelGenerator.rerunFameWithAdditionalGrains()) {
 							double[][] all_ks = rxn.getPDepRate().getRateConstants();
-							for (int numTemps=0; numTemps<temperatures.length; numTemps++) {
-								double T = temperatures[numTemps].getK();
+								double T = temperatures[0].getK();  // lowest temperature will have the highest over_high_P_factor.
 								double k_highPlimit = A * Math.pow(T,n) * Math.exp(-Ea/GasConstant.getKcalMolK()/T);
-								if (all_ks[numTemps][pressures.length-1] > 2*k_highPlimit) {
-									if (numGrains > 1000) {
-										System.out.println("Pressure-dependent rate exceeds high-P-limit rate: " +
-											"Number of grains already exceeds 1000.  Continuing RMG simulation " +
-											"with results from current fame run.");
-										break;	// No need to continue checking the rates for this one reaction
-									}
-									else {
-										System.out.println("Pressure-dependent rate exceeds high-P-limit rate: " +
-											"Re-running fame with additional number of grains");
-										pdepRatesOK = false;
-										return false;
-									}
+								double over_high_P_factor = all_ks[0][pressures.length-1] / k_highPlimit;
+								if (over_high_P_factor > 2) {
+									System.out.println("For reaction "+rxn.toString());
+									System.out.println(String.format("Pressure-dependent rate coefficient at %.0fK %.1fBar " +
+											"exceeds high-P-limit rate  by factor of %.1f .", T, Pmax*1e-5,over_high_P_factor));
+									pdepRatesOK = false;
 								}
-							}
-						//break;	// Why did MRH put this break here?
 						}
 					}
 				}
@@ -1024,11 +1025,7 @@ public class FastMasterEqn implements PDepKineticsEstimator {
 				// Add net reaction to list
 				netReactionList.add(rxn);
 
-
 			}
-
-			// Close stream when finished
-			br.close();
 
             // If we ignored a rate coefficient from the FAME output for any
             // reason, then fail the FAME job
@@ -1051,9 +1048,21 @@ public class FastMasterEqn implements PDepKineticsEstimator {
 			System.exit(0);
 		}
 		
+		if (!pdepRatesOK) {
+			if (numGrains > 1000) {
+				System.out.println("Number of grains already exceeds 1000. " +
+								   "Continuing with results from current fame run.");
+				pdepRatesOK = true; // this function is called inside a while(!pdepRatesOK) loop.
+			}
+			else {
+				numGrains = numGrains + 250;
+				System.out.println(String.format("Re-running fame with %d grains.",numGrains));
+				return false;
+			}
+		}
 		return true;
     }
-
+	
 	/**
 	 * Determines the maximum energy grain to use in the calculation. The
 	 * maximum energy grain is chosen to be 25 * R * T above the highest
