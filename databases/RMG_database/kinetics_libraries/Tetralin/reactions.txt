@@ -7,7 +7,8 @@ E: kcal/mol
 Reactions:
 
 //Initiation reactions ROOH = ROJ + HOJ
-tetOJ1 + HOJ = tetOOH1		2.0E13	0.0	0.0	0.0	0.0	0.0
+//tetOJ1 + HOJ = tetOOH1		2.0E13	0.0	0.0	0.0	0.0	0.0
+bitet = tetJ1 + tetJ1			2.02E-5	0.0	0.0 0.0	0.0	0.0
 
 //Addition of O2 to tetJ1
 //O2JJ + tetJ1 = tetOOJ1	7.54E12	0.0	0.0	0.0	0.0	0.0
