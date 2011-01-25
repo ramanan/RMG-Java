@@ -10,12 +10,14 @@ Reactions:
 tetOJ1 + HOJ = tetOOH1		2.0E13	0.0	0.0	0.0	0.0	0.0
 
 //Addition of O2 to tetJ1
-O2JJ + tetJ1 = tetOOJ1	7.54E12	0.0	0.0	0.0	0.0	0.0	  
+//O2JJ + tetJ1 = tetOOJ1	7.54E12	0.0	0.0	0.0	0.0	0.0
 //R_Recombination estimate: (Average:)	O2_birad     C_rad/H/OneDeC     	deltaHrxn(T=298K) = -20.536567382284815 kcal/mol
+O2JJ + tetJ1 = tetOOJ1	4.58E11	0.0	0.0	0.0	0.0	0.0	  
+// NIST database for the reaction O2 + C6H5CH2 --> C6H5CH2OO (reference: Fenter et al., IJCK, 26, 171-189, 1994) They report a slightly negative barrier of 0.38 kcal/mol but I am using 0 kcal/mol
 
 //tetOOJ1 abstracting from tet
-tet + tetOOJ1 = tetJ1 + tetOOH1	3.97e24	0	14.08	0.0	0.0	0.0	
-//NIST Kinetics database for the reaction HO2 + toluene (Baulch et al., J. Phys. Chem. Ref. Data, 1994
+tet + tetOOJ1 = tetJ1 + tetOOH1	3.97e11	0	14.08	0.0	0.0	0.0	
+//NIST Kinetics database for the reaction HO2 + toluene (Baulch et al., J. Phys. Chem. Ref. Data, 1994)
 
 //ROO termination reaction
 tetOOJ1 + tetOOJ1 = C10H10O + O2JJ + C10H12O	1.26E12	0.0	5.29	0.0	0.0	0.0		
