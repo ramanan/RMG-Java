@@ -80,6 +80,6 @@ Arrhenius_EP
 492.		Y_rad			Y_rad			300-1500	1.000E+13	0	0	0	0	0	0	0	1	MRH estimate
 
 //Added by AJ
-493.		O2_birad		C_rad/H2/Cb		298-398		4.585E+11	0	0	0.38	*3.16		0	0	0	1	Fenter et al. experimental data (benzyl + O2)
-494.		O2_birad		C_rad/H/Cb/Cs	298-398		4.585E+11	0	0	0.38	*3.16		0	0	0	1	Fenter et al. experimental data (benzyl + O2)
+493.		O2_birad		C_rad/H2/Cb		298-398		2.295E+11	0	0	-0.38	*3.16		0	0	0	1	Fenter et al. experimental data (benzyl + O2)
+494.		O2_birad		C_rad/H/Cb/Cs	298-398		2.295E+11	0	0	-0.38	*3.16		0	0	0	1	Fenter et al. experimental data (benzyl + O2)
 
