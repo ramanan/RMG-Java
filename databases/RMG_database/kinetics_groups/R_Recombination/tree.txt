@@ -16,6 +16,7 @@ L1: Y_rad
 			L4: C_rad/H2/CO
 			L4: C_rad/H2/O
 		L3: C_sec_rad
+			L4: C_rad/H/Cb/Cs
 			L4: C_rad/H/NonDeC
 			L4: C_rad/H/NonDeO
 				L5: C_rad/H/CsO
@@ -23,7 +24,7 @@ L1: Y_rad
 			L4: C_rad/H/OneDe
 				L5: C_rad/H/OneDeC
 				L5: C_rad/H/OneDeO
-			L4: C_rad/H/TwoDe
+			L4: C_rad/H/TwoDe			
 		L3: C_ter_rad
 			L4: C_rad/NonDeC
 				L5: C_rad/Cs3
