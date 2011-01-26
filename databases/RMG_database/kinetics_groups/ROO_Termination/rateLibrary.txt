@@ -4,5 +4,6 @@
 Arrhenius_EP
 
 //No.		Y_rad_1			Y_rad_2			Temp.		A			n		a		E0		DA		Dn		Da		DE0		Rank	Comments
-1.		ROO_rad_1			ROO_rad_2		300-1500	1.26E+12	0		0		5.29		0		0		0		0		0		Obtained from Landolt Bornstein
+//1.		ROO_rad_1			ROO_rad_2		300-1500	1.26E+12	0		0		5.29		0		0		0		0		0		Obtained from Landolt Bornstein
+1.			ROO_rad_1			ROO_rad_2		300-1500	1.8E+12		0		0		4.62		0		0		0		0		0		Obtained from Landolt Bornstein
 //1.		ROO_rad_1			ROO_rad_2		300-1500	2.47E+10	0		0		2.86		0		0		0		0		0		Obtained from Landolt Bornstein
