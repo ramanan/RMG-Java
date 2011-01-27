@@ -8,12 +8,16 @@ Reactions:
 
 //Initiation reactions ROOH = ROJ + HOJ
 tetOJ1 + HOJ = tetOOH1		2.0E13	0.0	0.0	0.0	0.0	0.0
-//bitet => tetJ1 + tetJ1		2.0E-5 	0.0 0.0	0.0	0.0	0.0
+bitet -> tetJ1 + tetJ1		2.0E-5 	0.0 0.0	0.0	0.0	0.0
+
+//Abstraction from tet by OH and tetOJ1
+tet(1)+tetOJ1 = tetJ1+SPC(11)	2.3248914e+04 	 2.29500 	 9.2300000e+00 	 	0.0	0.0	0.0
+tet(1)+HOJ = tetJ1+H2O(12)	1.6800000e+13 	 0.00000 	 2.5900000e+00 	 	0.0	0.0	0.0
 
 //Addition of O2 to tetJ1
-O2JJ + tetJ1 = tetOOJ1	7.54E12	0.0	0.0	0.0	0.0	0.0
+//O2JJ + tetJ1 = tetOOJ1	7.54E12	0.0	0.0	0.0	0.0	0.0
 //R_Recombination estimate: (Average:)	O2_birad     C_rad/H/OneDeC     	deltaHrxn(T=298K) = -20.536567382284815 kcal/mol
-//O2JJ + tetJ1 = tetOOJ1	4.58E11	0.0	0.0	0.0	0.0	0.0	  
+O2JJ + tetJ1 = tetOOJ1	4.58E11	0.0	0.0	0.0	0.0	0.0	  
 // NIST database for the reaction O2 + C6H5CH2 --> C6H5CH2OO (reference: Fenter et al., IJCK, 26, 171-189, 1994) They report a slightly negative barrier of 0.38 kcal/mol but I am using 0 kcal/mol
 
 //tetOOJ1 abstracting from tet
