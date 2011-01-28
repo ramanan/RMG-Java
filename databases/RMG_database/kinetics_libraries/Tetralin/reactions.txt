@@ -8,7 +8,8 @@ Reactions:
 
 //Initiation reactions ROOH = ROJ + HOJ
 tetOJ1 + HOJ = tetOOH1		2.0E13	0.0	0.0	0.0	0.0	0.0
-//bitet -> tetJ1 + tetJ1		2.0E-5 	0.0 0.0	0.0	0.0	0.0
+//tetOOH1 + tetOOH1 => tetOOJ1 + H2O(12) + tetOJ1 		2.0E12	0.0	26.0	0.0	0.0	0.0
+//bitet -> tetJ1 + tetJ1			2.0E-5 	0.0 0.0	0.0	0.0	0.0
 
 //Abstraction from tet by OH and tetOJ1
 //tet + tetOJ1 = tetJ1+SPC(11)	2.3248914e+04 	 2.29500 	 9.2300000e+00 	 	0.0	0.0	0.0
@@ -26,6 +27,7 @@ O2JJ + tetJ1 = tetOOJ1	4.58E11	0.0	0.0	0.0	0.0	0.0
 //NIST Kinetics database for the reaction HO2 + toluene (Baulch et al., J. Phys. Chem. Ref. Data, 1994)
 
 //ROO termination reaction
-//tetOOJ1 + tetOOJ1 = C10H10O + O2JJ + C10H12O	1.26E12	0.0	5.29	0.0	0.0	0.0		
+//tetOOJ1 + tetOOJ1 -> C10H10O + O2JJ + C10H12O	1.26E12	0.0	5.29	0.0	0.0	0.0		
+//tetOOJ1 + tetOOJ1 -> C10H10O + O2JJ + C10H12O	5.73E13	0.0	5.80	0.0	0.0	0.0		
 //tetOOJ1 + tetOOJ1 = C10H10O + O2JJ + C10H12O	1.26E12	0.0	5.29	0.0	0.0	0.0		
 //ROO_Termination exact: 	ROO_rad_1     ROO_rad_2     	deltaHrxn(T=298K) = -93.68165978971334 kcal/mol
