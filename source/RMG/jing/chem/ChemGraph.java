@@ -1902,7 +1902,8 @@ return sn;
         //double solventViscosity = 9.65e-6 * Math.exp((811.75/sysTemp.getK()+(346920/sysTemp.getK()/sysTemp.getK())));  //Viscosity of octanol at a function of temperature. Obtained from Matsuo and Makita (INTERNATIONAL JOURNAL OF THERMOPHYSICSVolume 10, Number 4, 833-843, DOI: 10.1007/BF00514479)
 		//double solventViscosity = 0.136*Math.pow(10,-3);  //Viscosity of liquid decane
         //double solventViscosity = 0.546*Math.pow(10,-3);  //Viscosity of liquid DMSO (dimethyl sulfoxide) Units: Pa.sec
-        double solventViscosity = 1.122*Math.pow(10,-3);  //Viscosity of liquid tetralin Source: International Journal of Thermophysics, Vol. 10, No. 4, 1989
+        //double solventViscosity = 1.122*Math.pow(10,-3);  //Viscosity of liquid tetralin Source: International Journal of Thermophysics, Vol. 10, No. 4, 1989
+        double solventViscosity = 0.404*Math.pow(10,-3);   //Viscosity of water at 343 K
 
         double denom = 132*solventViscosity*speRad/7;
 		double diffusivity = 1.381*sysTemp.getK()* Math.pow(10,-23)/denom;  //sysTemp.getK()
