@@ -109,6 +109,7 @@ public class ReactionModelGenerator {
     protected PrimaryAbrahamLibrary primaryAbrahamLibrary;
     protected static SolventData solvent;
     protected SolventLibrary solventLibrary;
+    protected static double viscosity;
 	
 	protected boolean readrestart = false;
 	protected boolean writerestart = false;
@@ -457,8 +458,10 @@ public class ReactionModelGenerator {
         		StringTokenizer st = new StringTokenizer(line);
         		String name = st.nextToken();
         		String diffusionOnOff = st.nextToken().toLowerCase();
-        		if (diffusionOnOff.equals("on")) {
-        			//Species.useSolvation = true;
+        		if (diffusionOnOff.startsWith("on")) {
+        			Integer hash_int = diffusionOnOff.indexOf("/");
+                    String viscosity_str = diffusionOnOff.substring(hash_int+1);
+                    viscosity = Double.parseDouble(viscosity_str);
                     setUseDiffusion(true);
         		} else if (diffusionOnOff.equals("off")) {
         			setUseDiffusion(false);
@@ -5162,6 +5165,10 @@ public class ReactionModelGenerator {
     
     public static SolventData getSolvent() {
     	return solvent;
+    }
+
+    public static double getViscosity() {
+    	return viscosity;
     }
 
     public SolventLibrary getSolventLibrary() {

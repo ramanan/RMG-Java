@@ -1903,9 +1903,10 @@ return sn;
 		//double solventViscosity = 0.136*Math.pow(10,-3);  //Viscosity of liquid decane
         //double solventViscosity = 0.546*Math.pow(10,-3);  //Viscosity of liquid DMSO (dimethyl sulfoxide) Units: Pa.sec
         //double solventViscosity = 0.6*Math.pow(10,-3);  //Viscosity of liquid CH3CN Units: Pa.sec
-        double solventViscosity = 1.122*Math.pow(10,-3);  //Viscosity of liquid tetralin Source: International Journal of Thermophysics, Vol. 10, No. 4, 1989
+        //double solventViscosity = 1.122*Math.pow(10,-3);  //Viscosity of liquid tetralin Source: International Journal of Thermophysics, Vol. 10, No. 4, 1989
         //double solventViscosity = 0.404*Math.pow(10,-3);   //Viscosity of water at 343 K
 
+        double solventViscosity = ReactionModelGenerator.getViscosity();
         double denom = 132*solventViscosity*speRad/7;
 		double diffusivity = 1.381*sysTemp.getK()* Math.pow(10,-23)/denom;  //sysTemp.getK()
 		return diffusivity;
