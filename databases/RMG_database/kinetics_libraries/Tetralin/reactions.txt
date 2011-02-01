@@ -29,6 +29,6 @@ O2JJ + tetJ1 = tetOOJ1	4.58E11	0.0	0.0	0.0	0.0	0.0
 
 //ROO termination reaction
 //tetOOJ1 + tetOOJ1 -> C10H10O + O2JJ + C10H12O	1.26E12	0.0	5.29	0.0	0.0	0.0		
-//tetOOJ1 + tetOOJ1 -> C10H10O + O2JJ + C10H12O	5.73E13	0.0	5.80	0.0	0.0	0.0		
+tetOOJ1 + tetOOJ1 -> C10H10O + O2JJ + C10H12O	5.73E13	0.0	5.80	0.0	0.0	0.0		
 //tetOOJ1 + tetOOJ1 = C10H10O + O2JJ + C10H12O	1.26E12	0.0	5.29	0.0	0.0	0.0		
 //ROO_Termination exact: 	ROO_rad_1     ROO_rad_2     	deltaHrxn(T=298K) = -93.68165978971334 kcal/mol
