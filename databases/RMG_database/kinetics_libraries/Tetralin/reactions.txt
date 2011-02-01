@@ -10,7 +10,7 @@ Reactions:
 tetOJ1 + HOJ = tetOOH1		2.0E13	0.0	0.0	0.0	0.0	0.0
 //tetOOH1 = tetOJ1 + HOJ	 	2.000e+12 	 0.00 	 38.00 	 	0.0	0.0	0.0
 //tetOOH1 + tetOOH1 => tetOOJ1 + H2O(12) + tetOJ1 		2.0E12	0.0	26.0	0.0	0.0	0.0
-bitet -> tetJ1 + tetJ1			4.0E-5 	0.0 0.0	0.0	0.0	0.0
+//bitet -> tetJ1 + tetJ1			4.0E-5 	0.0 0.0	0.0	0.0	0.0
 
 //Abstraction from tet by OH and tetOJ1
 //tet + tetOJ1 = tetJ1+SPC(11)	2.3248914e+04 	 2.29500 	 9.2300000e+00 	 	0.0	0.0	0.0
