@@ -320,6 +320,13 @@ public class Reaction {
                 DiffFactor = keff/rate;
                 rate = keff;
 
+                Species rxt1 = (Species) structure.reactants.getFirst();
+                String react_name = rxt1.getName();
+                if (react_name.startsWith("bitet")){
+                    rate = k_back*calculateKeq(p_temperature);
+                    DiffFactor = 1;
+                }
+
                 if (p_temperature.getK()==sys_temp.getK()){
                 setKineticsComments(k_All[0].getComment() + "\t" + "Diffusion factor = " + DiffFactor + "\t" + "rate=" + rate  + "\t" + "Keq =" + calculateKeq(p_temperature) + "\t" + "Temperature=" + p_temperature,0);
                 }
