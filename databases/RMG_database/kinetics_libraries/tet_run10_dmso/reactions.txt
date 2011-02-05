@@ -13,7 +13,7 @@ tetOOJ1(7) + tetOOJ1(7) => C10H10O + O2(2) + C10H12O	5.73E13	0.0	6.4	0.0	0.0	0.0
 
 //tetOJ1(6)+HOJ(4)  =  tetOOH1(5)	2.000e+13 	 0.00 	 0.00 	 	0.0	0.0	0.0
 //Assuming that the barrier for ROOH dissociation in water goes down by about 5 kcal/mol
-tetOOH1(5) = tetOJ1(6)+HOJ(4)	 	2.000e+12 	 0.00 	 38.00 	 	0.0	0.0	0.0
+tetOOH1(5) = tetOJ1(6)+HOJ(4)	 	2.000e+13 	 0.00 	 38.00 	 	0.0	0.0	0.0
 
 O2(2)+tetJ1(3)  =  tetOOJ1(7)	4.580e+11 	 0.00 	 0.00 	 	0.0	0.0	0.0
 tet(1)+tetOOJ1(7) = tetJ1(3)+tetOOH1(5)	5.3200000e+11 	 0.00000 	 1.1300000e+01 	 	0.0	0.0	0.0
