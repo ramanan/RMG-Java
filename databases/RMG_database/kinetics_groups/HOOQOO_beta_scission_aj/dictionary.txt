@@ -1,0 +1,56 @@
+// Created by Amrit Jalan, October 28, 2010
+// Details of the reactions/calculations may be obtained from Sandeep Sharma's paper (J. Phys. Chem. A 2010, 144, 5689-5701)
+
+HOOQOO
+Union {HOOCH(R)CH(R)OO,HOOCH(R)CH2CH(R)OO,HOOCH(R)CH2CH2CH(R)OO} 
+
+//1,4-Hydrogen Shift
+HOOCH(R)CH(R)OO
+1 *1 C 0 {2,S} {3,S} {5,S} {10,S}
+2 {R!H} 0 {1,S}
+3 C 0 {1,S} {4,S} {7,S} {11,S}
+4 {R!H} 0 {3,S}
+5 *2 O 0 {1,S} {6,S}
+6 *3 O 0 {5,S} {9,S}
+7 O 0 {3,S} {8,S}
+8 *4 O 1 {7,S}
+9 H 0 {6,S}
+10 *5 H 0 {1,S}
+11 H 0 {3,S}
+
+//1,5-Hydrogen Shift
+HOOCH(R)CH2CH(R)OO
+1 *1 C 0 {2,S} {3,S} {6,S} {11,S}
+2 {R!H} 0 {1,S}
+3 C 0 {1,S} {12,S} {13,S} {4,S} 
+4 C 0 {3,S} {5,S} {8,S} {14,S}
+5 {R!H} 0 {4,S}
+6 *2 O 0 {1,S} {7,S}
+7 *3 O 0 {6,S} {10,S}
+8 O 0 {4,S} {9,S}
+9 *4 O 1 {8,S}
+10 H 0 {7,S}
+11 *5 H 0 {1,S}
+12 H 0 {3,S}
+13 H 0 {3,S}
+14 H 0 {4,S}
+
+//1,6-Hydrogen Shift
+HOOCH(R)CH2CH2CH(R)OO
+1 *1 C 0 {2,S} {3,S} {7,S} {11,S}
+2 {R!H} 0 {1,S}
+3 C 0 {1,S} {4,S} {13,S} {14,S}
+4 C 0 {3,S} {5,S} {15,S} {16,S}
+5 C 0 {4,S} {6,S} {9,S} {17,S}
+6 {R!H} 0 {5,S}
+7 *2 O 0 {1,S} {8,S}
+8 *3 O 0 {7,S} {12,S}
+9 O 0 {5,S} {10,S}
+10 *4 O 1 {9,S}
+11 *5 H 0 {1,S}
+12 H 0 {8,S}
+13 H 0 {3,S}
+14 H 0 {3,S}
+15 H 0 {4,S}
+16 H 0 {4,S}
+17 H 0 {5,S}

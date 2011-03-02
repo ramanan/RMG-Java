@@ -210,6 +210,7 @@ public class PopulateReactions {
             	if (line.equals("on")) {
             		Species.useSolvation = true;
             		//                  rmg.setUseDiffusion(true);
+                    rmg.setUseSolvation(true);
             		listOfReactions += "Solution-phase chemistry!\n\n";
             	} else if (line.equals("off")) {
             		Species.useSolvation = false;

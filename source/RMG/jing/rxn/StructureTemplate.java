@@ -59,6 +59,8 @@ public class StructureTemplate {
     protected LinkedList reactants = new LinkedList();		//## attribute reactants 
     
     protected ArrayList reactantTree;
+
+    public String XH_speciesname;
     
     // Constructors
     
@@ -216,6 +218,12 @@ public class StructureTemplate {
         if (allowed == null) return null;
         
         LinkedHashSet hS =  p_reactant.identifyReactionMatchedSite(allowed);
+
+        // Check if the template is H_Abstraction
+//        if (isHAbstraction) {
+//            XH_speciesname = p_reactant.getSpecies().getChemkinName();
+//        }
+
 		double t = (System.currentTimeMillis()-pT)/1000/60;
         Global.RT_identifyReactedSites += t;
 		return hS;
