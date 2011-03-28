@@ -122,7 +122,7 @@ public static void main(String[] args) {
       
           String solventname = rmg.getSolvent().name;
           SolventData solvent = SolventLibrary.getSolventData(solventname);
-//            //Get solvent descriptors from solvent library
+            //Get solvent descriptors from solvent library
             double c_g = solvent.c_g;
             double e_g = solvent.e_g;
             double s_g = solvent.s_g;
@@ -130,8 +130,8 @@ public static void main(String[] args) {
             double a_g = solvent.a_g;
             double b_g = solvent.b_g;
             
-          thermo_output += "Name" + "\t" + "S" + "\t" + "B" + "\t" + "E" + "\t" + "L" + "\t" + "A" + "\t" + "V" + "\t" + "deltaG" + "\n" + "\n";
-          
+          thermo_output += "Name" + "\t" + "E" + "\t" + "S" + "\t" + "A" + "\t" + "B" + "\t" + "L" + "\t" + "V" + "\t" + "\n";
+          //thermo_output += "Name" + "\t" + "logK" + "\n";
           Iterator iter = speciesSet.iterator();       
           while (iter.hasNext()){
         	  Species spe = (Species)iter.next();
@@ -145,14 +145,10 @@ public static void main(String[] args) {
 
 
             double logK = c_g +(e_g*E)+(s_g*S)+(a_g*A)+(b_g*B)+(l_g*L);
-            //double logK = -1.271 +(0.822*E)+(2.743*S)+(3.904*A)+(4.814*B)+(-0.213*L);
-            double deltaG = -2.303*8.314*298*logK/4180;
+            //double deltaG = -2.303*8.314*298*logK/4180;      //Units = kcal/mol
             //String ab_source = spe.getChemGraph().getAbramData().getSource();
-            //double G = spe.getChemGraph().calculateG(systemTemp);
-            //double solv_corr = spe.getChemGraph().generateSolvThermoData().calculateG(systemTemp);
-            thermo_output += spe.getName() + "\t" + S + "\t" + B + "\t" + E + "\t" + L + "\t" + A + "\t" + V + "\t" + deltaG + "\n";
-            //thermo_output += spe.getName() + "\t" + solv_corr + "\n";
-
+            thermo_output += spe.getName() + "\t" + E + "\t" + S + "\t" + A + "\t" + B + "\t" + L + "\t" + V + "\t" + logK + "\n";
+            //thermo_output += spe.getName() + "\t" + logK + "\n";
           }
           
           try {
