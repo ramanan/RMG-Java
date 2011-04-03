@@ -64,12 +64,12 @@ L1: O
 	L2: Oss
 		L3: OssH           // Hydroxyl group
 			L4: OssH_phenolic  // Hydroxyl group attached to aromatic carbon	
-		L3: Oss*Cds(Od)Oss // Carbonate
-		L3: OssCds(Od)Oss* // Carbonate
+		//L3: Oss*Cds(Od)Oss // Carbonate
+		//L3: OssCds(Od)Oss* // Carbonate
 		//L3: Css(Oss*H)-Css(OssH) // 1,2-diol
 		L3: Oss-noncyclic
 		
     L2: Od
-    	L3: OssCds(Od*)Oss // Carbonate
+    	//L3: OssCds(Od*)Oss // Carbonate
     	L3: Cds(Od*)Cds=CdsCds(Od) // Quinone
 	
