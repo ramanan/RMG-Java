@@ -322,7 +322,7 @@ public class Reaction {
 
                 Species rxt1 = (Species) structure.reactants.getFirst();
                 String react_name = rxt1.getName();
-                if (react_name.startsWith("bitet")){
+                if (react_name.startsWith("init")){
                     rate = k_back*calculateKeq(p_temperature);
                     DiffFactor = 1;
                 }
