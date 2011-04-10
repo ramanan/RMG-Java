@@ -41,18 +41,20 @@ import jing.mathTool.*;
 
 public class Thermo {
 
-  //## configuration RMG::RMG
+
 public static void main(String[] args) {
 //  initializeSystemProperties();
 	RMG.globalInitializeSystemProperties();
 	LinkedHashSet speciesSet = new LinkedHashSet();
     String thermo_output = "";
     Temperature systemTemp = new Temperature();
-
+    SolventData curr_solvent;
+    
  try {
           FileReader in = new FileReader("thermo_input.txt");
           BufferedReader data = new BufferedReader(in);
-          
+          ReactionModelGenerator rmg = new ReactionModelGenerator();
+          //SolventData solvent = rmg.getSolvent();
           // Read the first line of thermo_input.txt
           String line = ChemParser.readMeaningfulLine(data, true);
           StringTokenizer st = new StringTokenizer(line);
@@ -61,10 +63,15 @@ public static void main(String[] args) {
         	  line = st.nextToken().toLowerCase();
         	  // The options for the "Solvation" field are "on" or "off" (as of 18May2009), otherwise do nothing and display a message to the user
         	  // Note: I use "Species.useInChI" because the "Species.useSolvation" updates were not yet committed.
-        	  if (line.equals("on")) {
+        	  if (line.startsWith("on")) {
         		  Species.useSolvation = true;
-        		  thermo_output += "Solution-phase Thermochemistry!\n\n";
-        	  } else if (line.equals("off")) {
+                  rmg.readAndMakePAL();
+                  thermo_output += "Solution-phase Thermochemistry!\n\n";
+                  Integer hash_int = line.indexOf("/");
+                  String solventname = line.substring(hash_int+1);
+                  rmg.readAndMakeSL(solventname);
+                                    
+        	  } else if (line.startsWith("off")) {
         		  Species.useSolvation = false;
         		  thermo_output += "Gas-phase Thermochemistry.\n\n";
         	  } else {
@@ -82,7 +89,6 @@ public static void main(String[] args) {
               systemTemp = new Temperature(tempValue,tempUnits);
               thermo_output += "System Temperature = " + systemTemp.getK() + "K" + "\n";
 
-            ReactionModelGenerator rmg = new ReactionModelGenerator();
             line = ChemParser.readMeaningfulLine(data, true);
             if (line.toLowerCase().startsWith("primarythermolibrary")) {
             	rmg.readAndMakePTL(data);
@@ -113,24 +119,36 @@ public static void main(String[] args) {
         	  System.out.println("Error in reading thermo_input.txt file:\nThe first line must read 'Solvation: on/off'.");
 
           in.close();
-          
-          thermo_output += "Output: Name" + "\t" + "deltaGsolv [=] kcal/mol" + "\n" + "\n";
-          
+      
+          String solventname = rmg.getSolvent().name;
+          SolventData solvent = SolventLibrary.getSolventData(solventname);
+            //Get solvent descriptors from solvent library
+            double c_g = solvent.c_g;
+            double e_g = solvent.e_g;
+            double s_g = solvent.s_g;
+            double l_g = solvent.l_g;
+            double a_g = solvent.a_g;
+            double b_g = solvent.b_g;
+            
+          thermo_output += "Name" + "\t" + "E" + "\t" + "S" + "\t" + "A" + "\t" + "B" + "\t" + "L" + "\t" + "V" + "\t" + "\n";
+          //thermo_output += "Name" + "\t" + "logK" + "\n";
           Iterator iter = speciesSet.iterator();       
           while (iter.hasNext()){
         	  Species spe = (Species)iter.next();
  
-            //double A = spe.getChemGraph().getAbramData().A;
-            //double B = spe.getChemGraph().getAbramData().B;
-            //double E = spe.getChemGraph().getAbramData().E;
-            //double S = spe.getChemGraph().getAbramData().S;
-            //double L = spe.getChemGraph().getAbramData().L;
+            double A = spe.getChemGraph().getAbramData().A;
+            double B = spe.getChemGraph().getAbramData().B;
+            double E = spe.getChemGraph().getAbramData().E;
+            double S = spe.getChemGraph().getAbramData().S;
+            double L = spe.getChemGraph().getAbramData().L;
+            double V = spe.getChemGraph().getAbramData().V;
 
-            //double logK = -1.271 +(0.822*E)+(2.743*S)+(3.904*A)+(4.814*B)+(-0.213*L);
-            //double deltaG = -2.303*8.314*298*logK/4180;
-            double G_gas = spe.getChemGraph().calculateG(systemTemp);
-            thermo_output += spe.getName() + "\t" + G_gas + "\n";
 
+            double logK = c_g +(e_g*E)+(s_g*S)+(a_g*A)+(b_g*B)+(l_g*L);
+            //double deltaG = -2.303*8.314*298*logK/4180;      //Units = kcal/mol
+            //String ab_source = spe.getChemGraph().getAbramData().getSource();
+            thermo_output += spe.getName() + "\t" + E + "\t" + S + "\t" + A + "\t" + B + "\t" + L + "\t" + V + "\t" + logK + "\n";
+            //thermo_output += spe.getName() + "\t" + logK + "\n";
           }
           
           try {

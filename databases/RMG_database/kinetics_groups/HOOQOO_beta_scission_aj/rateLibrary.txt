@@ -1,0 +1,13 @@
+// Created by Amrit Jalan, October 28, 2010
+// Details of the reactions/calculations may be obtained from Sandeep Sharma's paper (J. Phys. Chem. A 2010, 144, 5689-5701
+
+// beta scission of HOOQOO radicals
+
+// Define key word for format of the rate: either Arrhenius or Arrhenius_EP
+Arrhenius_EP
+
+//No.		Y_rad_1						Temp.		A			n		a		E0		DA		Dn		Da		DE0		Rank	Comments
+//1.		HOOQOO						300-1500	1.75E+8		1.7		0		26.00		0		0		0		0		0		Obtained from Landolt Bornstein
+2.		HOOCH(R)CH(R)OO 			300-1500	1.75E+8		1.7		0		26.00		0		0		0		0		0		Obtained from Landolt Bornstein
+3.		HOOCH(R)CH2CH(R)OO 			300-1500	1.75E+2		3.1		0		17.5		0		0		0		0		0		Obtained from Landolt Bornstein
+4.		HOOCH(R)CH2CH2CH(R)OO 		300-1500	2.53E+2		2.6		0		16.2		0		0		0		0		0		Obtained from Landolt Bornstein
