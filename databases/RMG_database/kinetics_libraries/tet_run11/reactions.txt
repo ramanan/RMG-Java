@@ -7,7 +7,7 @@ E: kcal/mol
 Reactions:
 
 //Irreversible pseudo AIBN initiation added by AJ
-bitet -> tetJ1(3) + tetJ1(3)	4.000e-5 	 0.00 	 0.00 	 	0.0	0.0	0.0
+bitet -> tetJ1(3) + tetJ1(3)	2.000e-5 	 0.00 	 0.00 	 	0.0	0.0	0.0
 tetOJ1(6)+HOJ(4) = tetOOH1(5)	2.000e+13 	 0.00 	 0.00 	 	0.0	0.0	0.0
 O2(2)+tetJ1(3) = tetOOJ1(7)	4.580e+11 	 0.00 	 0.00 	 	0.0	0.0	0.0
 tetOOJ1(7)+tetOOJ1(7) -> C10H10O(8)+O2(2)+C10H12O(9)	5.730e+13 	 0.00 	 5.80 	 	0.0	0.0	0.0
