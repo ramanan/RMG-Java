@@ -884,6 +884,9 @@ public class Species {
 				} else{
 					// use the name from the primary thermo library!
 					spe.setName(spe.getThermoData().getName());
+					// regenerate the chemkin-formatted NASA polynomials (small waste of time) because 
+					// these contain the species name, which we just changed.
+					spe.generateNASAThermoData();
 				}
 			}
         	//spe.ID =
