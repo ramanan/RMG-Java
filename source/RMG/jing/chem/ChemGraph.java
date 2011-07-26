@@ -1844,13 +1844,23 @@ return sn;
         return transportData;
     }
 
-        //## operation getThermoData()
     public ThermoData getSolvationData() {
         //#[ operation getThermoData()
         if (solvthermoData == null) generateSolvThermoData();
         return solvthermoData;
         //#]
     }
+
+    public double getdeltaHsolv298() {
+        double solvH298 = getSolvationData().getH298();
+        return solvH298;
+    }
+
+    public double getdeltaSsolv298() {
+        double solvS298 = getSolvationData().getS298();
+        return solvS298;
+    }
+
     
     public AbramData getAbramData() {
         //#[ operation getThermoData()
