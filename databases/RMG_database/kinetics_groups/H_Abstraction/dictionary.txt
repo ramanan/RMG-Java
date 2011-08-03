@@ -1156,3 +1156,11 @@ InChI=1/C4H7O/c1-2-3-4-5/h3-4H,2H2,1H3
 3 C 0 {2,S} {4,D}
 4 C 0 {3,D} {5,S}
 5 *3 O 1 {4,S}
+
+//Added by AJ for abstraction from H-ROOH
+C_rad/OOH/Cs/Cs
+1 *3 C 1 {2,S}, {3,S}, {4,S}
+2 O 0 {1,S} {5,S}
+3 Cs 0 {1,S}
+4 Cs 0 {1,S}
+5 O 0 {2,S}
