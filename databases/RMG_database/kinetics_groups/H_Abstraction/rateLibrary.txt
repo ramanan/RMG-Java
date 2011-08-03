@@ -369,12 +369,12 @@ Arrhenius_EP
 
 //Added by AJ for ROOH + RJ = ROOJ + RH
 // Previously RMG was using an averaging scheme using nodes 301-309 added above by MRH
-542.	ROOH_pri		C_rad/Cs3			500-1000	2.50e+09	0.0	0.0	4.0		0	0	0	0	1	Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
-543.	ROOH_sec		C_rad/Cs3			500-1000	1.00e+10	0.0	0.0	4.4		0	0	0	0	1	Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
-545.	ROOH_pri		C_rad/H/NonDeC		500-1000	3.16e+10	0.0	0.0	4.1		0	0	0	0	1	Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
-546.	ROOH_sec		C_rad/H/NonDeC		500-1000	7.94e+09	0.0	0.0	4.0		0	0	0	0	1	Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
-548.	ROOH_pri		C_rad/H2/Cs			500-1000	1.00e+11	0.0	0.0	4.7		0	0	0	0	1	Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
-549.	ROOH_sec		C_rad/H2/Cs			500-1000	1.26e+11	0.0	0.0	4.5		0	0	0	0	1	Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+542.	ROOH_pri		C_rad/Cs3			500-1000	2.50e+09	0.0	0.0	4.0		0	0	0	0	1	[AJ]Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+543.	ROOH_sec		C_rad/Cs3			500-1000	1.00e+10	0.0	0.0	4.4		0	0	0	0	1	[AJ]Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+545.	ROOH_pri		C_rad/H/NonDeC		500-1000	3.16e+10	0.0	0.0	4.1		0	0	0	0	1	[AJ]Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+546.	ROOH_sec		C_rad/H/NonDeC		500-1000	7.94e+09	0.0	0.0	4.0		0	0	0	0	1	[AJ]Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+548.	ROOH_pri		C_rad/H2/Cs			500-1000	1.00e+11	0.0	0.0	4.7		0	0	0	0	1	[AJ]Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+549.	ROOH_sec		C_rad/H2/Cs			500-1000	1.26e+11	0.0	0.0	4.5		0	0	0	0	1	[AJ]Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
 //550.	ROOH_ter		C_rad/H2/Cs			500-1000	1e+13		0.0	0.0	0.0		0	0	0	0	1	
 //544.	ROOH_ter		C_rad/Cs3			500-1000	1e+13		0.0	0.0	0.0		0	0	0	0	1
 //547.	ROOH_ter		C_rad/H/NonDeC		500-1000	1e+13		0.0	0.0	0.0		0	0	0	0	1
