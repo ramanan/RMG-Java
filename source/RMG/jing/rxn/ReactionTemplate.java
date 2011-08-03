@@ -670,8 +670,7 @@ public class ReactionTemplate {
       if (direction != 1 || !repOk()) {
       	return null;
       }
-      if (name.equals("Diels-Alder reaction"))
-    	  System.out.println("stop");
+
       ReactionTemplate reversetemplate = new ReactionTemplate();
       
       // set direction
@@ -694,11 +693,7 @@ public class ReactionTemplate {
       this.reverseReactionTemplate = reversetemplate;
       
       return reversetemplate;
-      
-      
-      
-      
-      
+
       //#]
   }
   
@@ -1065,7 +1060,6 @@ public class ReactionTemplate {
           try {
           	LinkedList product = reactionAdjList.reactChemGraph(reactant);
 			LinkedList productSp = new LinkedList();
-				SpeciesDictionary sd = SpeciesDictionary.getInstance();
 				for (int i=0; i< product.size(); i++){
 					String name = null;
 					if (((ChemGraph)product.get(i)).getSpecies() == null){
@@ -1088,16 +1082,8 @@ public class ReactionTemplate {
 							for (int i=0; i<k.length; i++) {
 								reverseReaction.addAdditionalKinetics(k[i],redundancy,false);
 							}
-							//structure = null;
 						}
-							
       			}
-					/*else {
-						SpeciesDictionary sd = SpeciesDictionary.getInstance();
-						while (!product.isEmpty())
-							sd.remove(((ChemGraph)product.remove()));
-						
-					}*/
       		}
           }
           catch (ForbiddenStructureException e) {
@@ -1299,8 +1285,8 @@ public class ReactionTemplate {
       }
       catch (Exception e) {
 		Logger.logStackTrace(e);
-      	System.err.println("Error in read in reaction template: " + name);
-      	System.err.println(e.getMessage());
+      	Logger.critical("Error in read in reaction template: " + name);
+      	Logger.critical(e.getMessage());
       	System.exit(0);
       }
       

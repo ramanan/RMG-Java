@@ -934,8 +934,8 @@ public class Reaction {
 			  // this Hrxn is for the reverse reaction (ie. -Hrxn_forward)
 	      	double doubleEr = k[numKinetics].getEValue() - (doubleAlpha-1)*Hrxn;
 	      	if (doubleEr < 0) {
-	      		System.err.println("fitted Er < 0: "+Double.toString(doubleEr));
-	      		System.err.println(getStructure().toString());
+	      		Logger.warning("fitted Er < 0: "+Double.toString(doubleEr));
+	      		Logger.warning(getStructure().toString());
 	      		//doubleEr = 0;
 	      	}
 	
@@ -1068,22 +1068,31 @@ public class Reaction {
   // in Reaction Library, Seed Mech and Template Reaction with Library Reaction feature
   
   public String getKineticsSource(int num_k){
-	  // The num_k is the number for different kinetics stored for one type of reaction but formed due to different families
-	  // Check if the kinetics exits
-	  if (kinetics != null) {
-		  // Check if the "source" string is not null
-		  if(kinetics[num_k].getSource() != null){
-			  return kinetics[num_k].getSource();  
-		  }
-		  else{
-			  // This is mostly done for case of H Abstraction where forward kinetic source is null
-			  //we might need to check if this "source" is also null (Can be source of Bug)
-			  return this.reverseReaction.kinetics[num_k].getSource();  
-		  }
-	  } else
-		  // Returns Source as null when there are no Kinetics at all!
-		  return null;
-	  
+	// The num_k is the number for different kinetics stored for one type of reaction but formed due to different families
+
+	// Returns Source as null when there are no Kinetics at all!
+	if (kinetics == null) {
+		return null;
+	}
+	
+	String source = null;
+	if(kinetics[num_k] != null){
+		source = kinetics[num_k].getSource();
+	}
+	// This is mostly done for case of H Abstraction where forward kinetic source may be null
+	if (source == null){
+		try {
+			source = this.reverseReaction.kinetics[num_k].getSource();
+		}
+		catch (NullPointerException e) {
+			// this catches several possibilities:
+			// this.reverseReaction == null
+			// this.reverseReaction.kinetics == null
+			// this.reverseReaction.kinetics[num_k] == null
+			source = null;
+		}
+	}
+	return source;
   }
   
   
@@ -1151,7 +1160,62 @@ public class Reaction {
   //## operation getReactants()
   public ListIterator getReactants() {
       //#[ operation getReactants()
-      return structure.getReactants();
+      try{
+	return structure.getReactants();
+      }
+      catch (RuntimeException e){
+
+	  Logger.critical("******DEBUGGING LINES FOLLOW******");
+	  Logger.critical(e.getMessage());
+	  Logger.critical(e.getStackTrace().toString());
+	  Logger.critical("This.toString:"+this.toString());
+	  Logger.critical("Comments:"+comments);
+	  Logger.critical("ChemkinString:"+ChemkinString);
+	  Logger.critical("Rate constant:"+rateConstant);
+	  Logger.critical("Finalized:"+finalized);
+	  Logger.critical("KineticsFromPrimaryKineticLibrary:"+kineticsFromPrimaryKineticLibrary);
+	  Logger.critical("ExpectDuplicate:"+expectDuplicate);
+	  if (kinetics != null){
+		 Logger.critical("Kinetics size:"+kinetics.length);
+		 Logger.critical("First kinetics info:"+kinetics[0].toString());
+		 Logger.critical("First kinetics source:"+kinetics[0].getSource());
+		 Logger.critical("First kinetics comment:"+kinetics[0].getComment());
+	  }
+	  if (fittedReverseKinetics != null){
+		 Logger.critical("Reverse kinetics size:"+fittedReverseKinetics.length);
+		 Logger.critical("First reverse kinetics info:"+fittedReverseKinetics[0].toString());
+		 Logger.critical("First reverse kinetics source:"+fittedReverseKinetics[0].getSource());
+		 Logger.critical("First reverse kinetics comment:"+fittedReverseKinetics[0].getComment());
+	  }
+	  if(reverseReaction != null){
+	      Logger.critical("***Reverse reaction info below***");
+	      Logger.critical("reverseReaction.toString:"+reverseReaction.toString());
+	      Logger.critical("Comments:"+reverseReaction.comments);
+	      Logger.critical("ChemkinString:"+reverseReaction.ChemkinString);
+	      Logger.critical("Rate constant:"+reverseReaction.rateConstant);
+	      Logger.critical("Finalized:"+reverseReaction.finalized);
+	      Logger.critical("KineticsFromPrimaryKineticLibrary:"+reverseReaction.kineticsFromPrimaryKineticLibrary);
+	      Logger.critical("ExpectDuplicate:"+reverseReaction.expectDuplicate);
+	      if (reverseReaction.structure !=null){
+		  Logger.critical("(for reverse reaction): structure.toString()"+reverseReaction.structure.toString());
+	      }
+
+	      if (reverseReaction.kinetics != null){
+		     Logger.critical("Kinetics size:"+reverseReaction.kinetics.length);
+		     Logger.critical("First kinetics info:"+reverseReaction.kinetics[0].toString());
+		     Logger.critical("First kinetics source:"+reverseReaction.kinetics[0].getSource());
+		     Logger.critical("First kinetics comment:"+reverseReaction.kinetics[0].getComment());
+	      }
+	      if (reverseReaction.fittedReverseKinetics != null){
+		     Logger.critical("Reverse kinetics size:"+reverseReaction.fittedReverseKinetics.length);
+		     Logger.critical("First reverse kinetics info:"+reverseReaction.fittedReverseKinetics[0].toString());
+		     Logger.critical("First reverse kinetics source:"+reverseReaction.fittedReverseKinetics[0].getSource());
+		     Logger.critical("First reverse kinetics comment:"+reverseReaction.fittedReverseKinetics[0].getComment());
+	      }
+	  }
+
+	  throw e;
+      }
       //#]
   }
 
@@ -1661,7 +1725,7 @@ public class Reaction {
 		if (!isFromPrimaryKineticLibrary())
 		{
 			if (isForward())
-				if (kinetics != null)
+				if (getKineticsSource(0) != null)
 					if (getKineticsSource(0).contains("Library"))
 						throw new RuntimeException(String.format(
 							"Reaction %s kinetics source contains 'Library' but isFromPrimaryKineticLibrary() returned false.",this));

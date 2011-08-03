@@ -281,6 +281,7 @@ Arrhenius_EP
 876		R4H_SDS         O_rad_out               Cs_H_out_H/NonDeC       600-2000    1.11E+06    1.78    0       27.18   *3	0	0		2	3		MHS CBS-QB3 calculations. 
 877		R5H_SSSD		O_rad_out				Cd_H_out_singleH		600-2000	1.234E+06	1.554	0		26.636	*3	0	0		2	3		MRH CBS-QB3 calculations w/1d h.r. corrections
 
+
 // Added by AJ for intra_H abstraction in HOOQOO radicals (rates take from Sandeep's paper DOI: 10.1021/jp9098792)
 878		R4H_SSS_OOCsCs					O_rad_out		Cs_H_out_OOH/H		300-1500	2.47e12		-0.24	0		28.00	0	0	0		0	3			[AJ]Sandeep's DFT/CBSB7 level of calculations.
 879		R4H_SSS_OOCsCs					O_rad_out		Cs_H_out_OOH/Cs		300-1500	2.76e8		1.20	0		25.70	0	0	0		0	3			[AJ]Sandeep's DFT/CBSB7 level of calculations.
@@ -297,3 +298,4 @@ Arrhenius_EP
 890		R6H_SSSSS_OO(Cs/Cs)C(Cs/Cs)		O_rad_out		Cs_H_out_OOH/Cs		300-1500	2.54e2		2.60	0		16.20	0	0	0		0	3			[AJ]Sandeep's DFT/CBSB7 level of calculations.
 891		R7H_OOCs4						O_rad_out		Cs_H_out_OOH/H		300-1500	5.57e2		1.80	0		16.60	0	0	0		0	3			[AJ]Sandeep's DFT/CBSB7 level of calculations.
 892		R7H_OOCCCC(Cs/Cs)				O_rad_out		Cs_H_out_OOH/Cs		300-1500	2.00e3		1.90	0		14.90	0	0	0		0	3			[AJ]Sandeep's DFT/CBSB7 level of calculations.
+

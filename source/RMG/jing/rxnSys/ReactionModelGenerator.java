@@ -431,7 +431,7 @@ public class ReactionModelGenerator {
                     readAndMakePAL();
                     String solventname = st.nextToken().toLowerCase();
                     readAndMakeSL(solventname);
-					System.out.println(String.format(
+					Logger.info(String.format(
 						"Using solvation corrections to thermochemsitry with solvent properties of %s",solventname));
         		} else if (solvationOnOff.startsWith("off")) {
                     setUseSolvation(false);
@@ -451,7 +451,7 @@ public class ReactionModelGenerator {
                     String viscosity_str = st.nextToken();
                     viscosity = Double.parseDouble(viscosity_str);
                     setUseDiffusion(true);
-					System.out.println(String.format(
+					Logger.info(String.format(
 						"Using diffusion corrections to kinetics with solvent viscosity of %.3g Pa.s.",viscosity));
         		} else if (diffusionOnOff.equals("off")) {
         			setUseDiffusion(false);
@@ -788,7 +788,7 @@ public class ReactionModelGenerator {
                             if (st.nextToken().trim().toLowerCase().equals("non-negative")){
                                 if(simulator.toLowerCase().equals("dassl")) JDAS.nonnegative = true;
                                 else{
-                                    System.err.println("Non-negative option is currently only supported for DASSL. Switch to DASSL solver or remove non-negative option.");
+                                    Logger.critical("Non-negative option is currently only supported for DASSL. Switch to DASSL solver or remove non-negative option.");
                                     System.exit(0);
                                 }
                             }
@@ -799,7 +799,9 @@ public class ReactionModelGenerator {
 				boolean autoflag = false;//5/2/08 gmagoon: updating the following if/else-if block to consider input where we want to check model validity within the ODE solver at each time step; this will be indicated by the use of a string beginning with "AUTO" after the "TimeStep" or "Conversions" line
         		// read in time step
         		line = ChemParser.readMeaningfulLine(reader, true);
-        		if (line.startsWith("TimeStep:") && finishController.terminationTester instanceof ReactionTimeTT) {
+        		if (line.startsWith("TimeStep:")) {
+					if (!(finishController.terminationTester instanceof ReactionTimeTT))
+						throw new InvalidSymbolException("'TimeStep:' specified but finish controller goal is not reaction time.");
         			st = new StringTokenizer(line);
         			temp = st.nextToken();
         			while (st.hasMoreTokens()) {
@@ -815,7 +817,9 @@ public class ReactionModelGenerator {
         			}      
         			((ReactionTimeTT)finishController.terminationTester).setTimeSteps(timeStep);
         		}
-        		else if (line.startsWith("Conversions:") && finishController.terminationTester instanceof ConversionTT){
+        		else if (line.startsWith("Conversions:")){
+					if (!(finishController.terminationTester instanceof ConversionTT))
+						throw new InvalidSymbolException("'Conversions:' specified but finish controller goal is not conversion.");
         			st = new StringTokenizer(line);
         			temp = st.nextToken();
         			int i=0;
@@ -841,7 +845,7 @@ public class ReactionModelGenerator {
         			conversionSet[i] = (1 - conversionSet[49])* initialConc;
         			numConversions = i+1;
         		}
-        		else throw new InvalidSymbolException("condition.txt: can't find time step for dynamic simulator!");
+        		else throw new InvalidSymbolException("In condition file can't find 'TimeStep:' or 'Conversions:' for dynamic simulator.");
 
 			//
 			if (temp.startsWith("AUTOPRUNE")){//for the AUTOPRUNE case, read in additional lines for termTol and edgeTol
@@ -1090,8 +1094,8 @@ public class ReactionModelGenerator {
 						Logger.info("This may have unintended consequences");
 					}
 					else {
-						System.err.println("Input file invalid");
-						System.err.println("Please include a 'GenerateReactions: yes/no' line for seed mechanism "+name);
+						Logger.critical("Input file invalid");
+						Logger.critical("Please include a 'GenerateReactions: yes/no' line for seed mechanism "+name);
 						System.exit(0);
 					}
 					
@@ -1157,7 +1161,7 @@ public class ReactionModelGenerator {
 					if (units.equals("moles") || units.equals("molecules"))
 						ArrheniusKinetics.setAUnits(units);
 					else {
-						System.err.println("Units for A were not recognized: " + units);
+						Logger.critical("Units for A were not recognized: " + units);
 						System.exit(0);
 					}
 				} else throw new InvalidSymbolException("Error reading condition.txt file: "
@@ -1171,7 +1175,7 @@ public class ReactionModelGenerator {
 						units.equals("kJ/mol") || units.equals("J/mol") || units.equals("Kelvins"))
 						ArrheniusKinetics.setEaUnits(units);
 					else {
-						System.err.println("Units for Ea were not recognized: " + units);
+						Logger.critical("Units for Ea were not recognized: " + units);
 						System.exit(0);
 					}
 				} else throw new InvalidSymbolException("Error reading condition.txt file: "
@@ -1263,7 +1267,7 @@ public class ReactionModelGenerator {
 			//    PDepNetwork.setPressureArray(pressureArray);//10/30/07 gmagoon: same for pressure;//UPDATE: commenting out: not needed if updateKLeak is done for one temperature/pressure at a time; 11/1-2/07 restored; 11/6/07 gmagoon: moved before initialization of lrg;
 		}
         catch (IOException e) {
-        	System.err.println("Error reading reaction system initialization file.");
+        	Logger.error("Error reading reaction system initialization file.");
         	throw new IOException("Input file error: " + e.getMessage());
         }
 
@@ -1285,11 +1289,13 @@ public class ReactionModelGenerator {
          	initializeReactionSystems();
         }
         catch (IOException e) {
-        	System.err.println(e.getMessage());
+			Logger.logStackTrace(e);
+        	Logger.critical(e.getMessage());
         	System.exit(0);
         }
         catch (InvalidSymbolException e) {
-        	System.err.println(e.getMessage());
+			Logger.logStackTrace(e);
+        	Logger.critical(e.getMessage());
         	System.exit(0);
         }
 		
@@ -4102,7 +4108,22 @@ public class ReactionModelGenerator {
 					toRemovePath = new HashSet();
 					while(rIter.hasNext()){
 						Reaction reaction = (Reaction)rIter.next();
-						if (reactionPrunableQ(reaction, speciesToPrune))  toRemovePath.add(reaction);
+						try {
+							if (reactionPrunableQ(reaction, speciesToPrune))  toRemovePath.add(reaction);
+						}
+						catch (NullPointerException e) {
+							Logger.error("NullPointerException when inspecting Path Reaction");
+							Logger.logStackTrace(e);
+							Logger.error("Path reaction will not be pruned. Here is the network:");
+							try {
+								Logger.error(pdn.toString());
+							}
+							catch (NullPointerException e2) {
+								Logger.error("NullPointerException trying to print PDEpNetwork");
+								Logger.logStackTrace(e2);
+							}
+						}
+						
 					}
 					//identify net reactions to remove
 					rIter = pdn.getNetReactions().iterator();
@@ -4203,8 +4224,6 @@ public class ReactionModelGenerator {
             else if (speciesToPrune.size() > 100)
                 // There were a significant number of species pruned, but we didn't recover any memory
                 Logger.warning("No memory recovered due to pruning!");
-
-
 
 		}
 		//System.out.println("PDep Pruning DEBUG:\nThe number of species in the model's edge, after pruning: " + ((CoreEdgeReactionModel)reactionModel).getEdge().getSpeciesNumber());
@@ -4470,7 +4489,7 @@ public class ReactionModelGenerator {
 			 */
 			
 			if (SpectroscopicData.mode != SpectroscopicData.mode.OFF) {
-				System.err.println("Terminating RMG simulation: User requested frequency estimation, " +
+				Logger.critical("Terminating RMG simulation: User requested frequency estimation, " +
 						"yet no pressure-dependence.\nSUGGESTION: Set the " +
 						"SpectroscopicDataEstimator field in the input file to 'off'.");
 				System.exit(0);
@@ -4835,7 +4854,7 @@ public class ReactionModelGenerator {
 					try {
 						concentration = Double.parseDouble(reactive);
 					} catch (NumberFormatException e) {
-						System.out.println(String.format("Unable to read concentration value '%s'. Check syntax of input line '%s'.",reactive,line));
+						Logger.error(String.format("Unable to read concentration value '%s'. Check syntax of input line '%s'.",reactive,line));
 						throw e;
 					}
 					if (unit.equals("mole/l") || unit.equals("mol/l") || unit.equals("mole/liter") || unit.equals("mol/liter")) {
@@ -4850,7 +4869,7 @@ public class ReactionModelGenerator {
 						concentration /= 6.022e23;
 					}
 					else if (!unit.equals("mole/cm3") && !unit.equals("mol/cm3")) {
-						System.out.println(String.format("Unable to read concentration units '%s'. Check syntax of input line '%s'.",unit,line));
+						Logger.error(String.format("Unable to read concentration units '%s'. Check syntax of input line '%s'.",unit,line));
 						throw new InvalidUnitException("Species Concentration in condition.txt!");
 					}
 					SpeciesStatus ss = new SpeciesStatus(species,1,concentration,0.0);
