@@ -378,4 +378,4 @@ Arrhenius_EP
 //550.	ROOH_ter		C_rad/H2/Cs			500-1000	1e+13		0.0	0.0	0.0		0	0	0	0	1	
 //544.	ROOH_ter		C_rad/Cs3			500-1000	1e+13		0.0	0.0	0.0		0	0	0	0	1
 //547.	ROOH_ter		C_rad/H/NonDeC		500-1000	1e+13		0.0	0.0	0.0		0	0	0	0	1
-551.	ROOH_pri		C_rad/OOH/Cs/Cs		500-1000	1.00e+10	0.0	1.5	4.1		0	0	0	0	1	Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+551.	ROOH_pri		C_rad/OOH/Cs/Cs		500-1000	9.765e+08	0.0	0.0	6.16	0	0	0	0	1	[AJ] Based on recommendations for reverse rate by Pfaendtner and Broadbelt in DOI: 10.1021/ie0714807.
