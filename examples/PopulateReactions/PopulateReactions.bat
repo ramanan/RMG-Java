@@ -14,6 +14,13 @@ echo Error: input.txt not found. Please create an PopulateReactions input file b
 goto end
 )
 
+if not exist families.txt (
+echo Error: families.txt not found
+goto end
+)
+
+copy families.txt "%RMG%\databases\RMG_database\kinetics_groups\"
+
 echo Running PopulateReactions...
 java -Xmx500m -classpath "%RMG%\bin\RMG.jar" PopulateReactions input.txt > RMG.log 2>&1 &
 echo PopulateReactions job completed.
