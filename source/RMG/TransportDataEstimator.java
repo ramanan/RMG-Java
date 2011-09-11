@@ -76,7 +76,8 @@ public class TransportDataEstimator {
             	} else
             		transportProperties += speciesName + whitespace.substring(speciesName.length()) +  
             				"   " + lj4species.toString();
-            	
+            	double omega = lj4species.getGAData().calculateOmega();
+                System.out.println("Acentric factor, Omega =" + omega);
             	transportProperties += " ! " + lj4species.getSource() + "\t" + lj4species.getComment() + "\n";
             	
             	// (Attempt to) Read next line of input file
