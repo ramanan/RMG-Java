@@ -61,18 +61,20 @@ public class NASAThermoEstimator {
     private static void readNASAFromFile(BufferedReader reader) throws IOException, ForbiddenStructureException {
 
         String line = ChemParser.readMeaningfulLine(reader, true);
-        String ThermoPrime = "";
-        ThermoPrime += "Values of 0.0 imply temperatures which were outside the recommended temperature range in the PrIMe data" + "\n" + "\n";
-        ThermoPrime += "Name" + "\t" + "G300" + "\t" + "G400" + "\t" + "G500" + "\t" + "G600" + "\t" + "G700" + "\t" + "G800" + "\t" + "G900" + "\t" + "G1000" + "\t" + "G1100" + "\t" + "G1200" + "\n" + "\n";
+        String ThermoBurcat = "";
+        ThermoBurcat += "Values of 0.0 imply temperatures which were outside the recommended temperature range in the PrIMe data" + "\n" + "\n";
+        ThermoBurcat += "Name" + "\t" + "G300" + "\t" + "G400" + "\t" + "G500" + "\t" + "G600" + "\t" + "G700" + "\t" + "G800" + "\t" + "G900" + "\t" + "G1000" + "\t" + "G1100" + "\t" + "G1200" + "\n" + "\n";
         String ThermoRMG = "";
         ThermoRMG += "Name" + "\t" + "G300" + "\t" + "G400" + "\t" + "G500" + "\t" + "G600" + "\t" + "G700" + "\t" + "G800" + "\t" + "G900" + "\t" + "G1000" + "\t" + "G1100" + "\t" + "G1200" + "\n" + "\n";
         String JTherGasInChIList = "";
 
         while (line != null) {
-            if (line.startsWith("s000")) {
+             if (line.toLowerCase().startsWith("inchi")){
+//            if (line.startsWith("s000")) {
                 String AdjList = "";
                 String name = line;
-                String inchi = ChemParser.readMeaningfulLine(reader, true);
+//                String inchi = ChemParser.readMeaningfulLine(reader, true);
+                String inchi = line;
                 AdjList = Species.inchi2AdjList(inchi);
                 Graph g = ChemParser.readAdjList(AdjList);
                 ChemGraph cg = ChemGraph.make(g);
@@ -82,7 +84,7 @@ public class NASAThermoEstimator {
                 if (spe.getChemGraph().getCarbonNumber() >= 4) {
                     JTherGasInChIList += inchi + "\t" + name + "\n";
                     //}
-                    ThermoPrime += inchi;
+                    ThermoBurcat += inchi;
                     ThermoRMG += inchi;
 
                     String firstline = ChemParser.readMeaningfulLine(reader, true);
@@ -116,10 +118,10 @@ public class NASAThermoEstimator {
                             Gprime = 0.0;
                         }
                         Grmg = RMGnasaThermoData.calculateFreeEnergy(T);
-                        ThermoPrime += "\t" + Gprime;
+                        ThermoBurcat += "\t" + Gprime;
                         ThermoRMG += "\t" + Grmg;
                     }
-                    ThermoPrime += "\n";
+                    ThermoBurcat += "\n";
                     ThermoRMG += "\n";
                 }
             }
@@ -128,7 +130,7 @@ public class NASAThermoEstimator {
         try {
             File primedat = new File("ThermoPrime.txt");
             FileWriter fw = new FileWriter(primedat);
-            fw.write(ThermoPrime);
+            fw.write(ThermoBurcat);
             fw.close();
             System.out.println("Results written to ThermoPrime.txt");
         } catch (IOException e) {
