@@ -56,7 +56,7 @@ public class ThermoDataEstimator {
      *
      * @param args  filename of input file
      */
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 
         RMG.globalInitializeSystemProperties();
 
@@ -77,12 +77,50 @@ public class ThermoDataEstimator {
 
             readDatabasePath(reader);
 
-//			qmflags = readQMFlags(reader);
+            qmflags = readQMFlags(reader);
+
+            Global.maxRadNumForQM = qmflags.maxRadNumForQM.intValue();
+            ChemGraph.useQM = qmflags.qmActive.booleanValue();
+            QMTP.qmprogram = qmflags.method.toLowerCase();
+            ChemGraph.useQMonCyclicsOnly = qmflags.qmOnCyclicsOnly.booleanValue();
+
+            readPrimaryThermoLibrary(reader);
+            mappedChemGraphsToNames = readChemGraphsFromFile(speciesFromInputFile, reader);
+
+        } catch (InvalidChemGraphException e) {
+            e.printStackTrace();
+        } catch (ForbiddenStructureException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
+
+        generateTDProperties(mappedChemGraphsToNames);
+
+        Logger.info("Done!\n");
+
+
+        createFolders();
+
+        /**
+         * TODO program against interfaces, not implementations!
+         */
+//        LinkedHashMap speciesFromInputFile = new LinkedHashMap();
 //
-//			Global.maxRadNumForQM = qmflags.maxRadNumForQM.intValue();
-//			ChemGraph.useQM = qmflags.qmActive.booleanValue();
-//			QMTP.qmprogram = qmflags.method.toLowerCase();
-//			ChemGraph.useQMonCyclicsOnly = qmflags.qmOnCyclicsOnly.booleanValue();
+//        Map<ChemGraph, String> mappedChemGraphsToNames = null;
+//        QMFlags qmflags = null;
+        try {
+            File file = new File(args[0]);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+
+            readDatabasePath(reader);
+
+            qmflags = readQMFlags(reader);
+
+            Global.maxRadNumForQM = qmflags.maxRadNumForQM.intValue();
+            ChemGraph.useQM = qmflags.qmActive.booleanValue();
+            QMTP.qmprogram = qmflags.method.toLowerCase();
+            ChemGraph.useQMonCyclicsOnly = qmflags.qmOnCyclicsOnly.booleanValue();
 
             readPrimaryThermoLibrary(reader);
             mappedChemGraphsToNames = readChemGraphsFromFile(speciesFromInputFile, reader);
