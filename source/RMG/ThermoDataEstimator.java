@@ -79,12 +79,12 @@ public class ThermoDataEstimator {
 
 			readDatabasePath(reader);
 
-			qmflags = readQMFlags(reader);
-
-			Global.maxRadNumForQM = qmflags.maxRadNumForQM.intValue();
-			ChemGraph.useQM = qmflags.qmActive.booleanValue();
-			QMTP.qmprogram = qmflags.method.toLowerCase();
-			ChemGraph.useQMonCyclicsOnly = qmflags.qmOnCyclicsOnly.booleanValue();
+//			qmflags = readQMFlags(reader);
+//
+//			Global.maxRadNumForQM = qmflags.maxRadNumForQM.intValue();
+//			ChemGraph.useQM = qmflags.qmActive.booleanValue();
+//			QMTP.qmprogram = qmflags.method.toLowerCase();
+//			ChemGraph.useQMonCyclicsOnly = qmflags.qmOnCyclicsOnly.booleanValue();
 
 			readPrimaryThermoLibrary(reader);
 			mappedChemGraphsToNames = readChemGraphsFromFile(speciesFromInputFile, reader);
