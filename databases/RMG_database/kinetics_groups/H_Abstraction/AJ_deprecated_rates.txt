@@ -1,0 +1,17 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// All nodes corresponding to tertiary hydroperoxides have been commented out by AJ
+//550.	ROOH_ter		C_rad/H2/Cs			500-1000	1e+13		0.0		0.0	0.0		0	0	0	0	1	
+//544.	ROOH_ter		C_rad/Cs3			500-1000	1e+13		0.0		0.0	0.0		0	0	0	0	1
+//547.	ROOH_ter		C_rad/H/NonDeC		500-1000	1e+13		0.0		0.0	0.0		0	0	0	0	1
+
+//Other commented out nodes
+//543.	ROOH_sec		C_rad/Cs3			500-1000	1.00e+10	0.0		0.0	4.4		0	0	0	0	1	[AJ]Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+//546.	ROOH_sec		C_rad/H/NonDeC		500-1000	7.94e+09	0.0		0.0	4.0		0	0	0	0	1	[AJ]Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+//549.	ROOH_sec		C_rad/H2/Cs			500-1000	1.26e+11	0.0		0.0	4.5		0	0	0	0	1	[AJ]Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+//551.	ROOH_pri		C_rad/OOH/Cs/Cs		500-1000	9.765e+08	0.0		0.0	6.16	0	0	0	0	1	[AJ] Based on recommendations for reverse rate by Pfaendtner and Broadbelt in DOI: 10.1021/ie0714807.
+//542.	ROOH_pri		C_rad/Cs3			500-1000	2.50e+09	0.0		0.0	4.0		0	0	0	0	1	[AJ]Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+//543.	ROOH_sec		C_rad/Cs3			500-1000	1.67e+01	3.20	0.0	3.57	0	0	0	0	1	[AJ]Rate expression obtained from recommendation of Aguilera-Iparraguirre et al., 2008 for HO2 + alkanes using the R12 method.
+//544.	ROOH_pri		C_rad/H/NonDeC		500-1000	3.16e+10	0.0		0.0	4.1		0	0	0	0	1	[AJ]Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+//545.	ROOH_sec		C_rad/H/NonDeC		500-1000	1.67e+01	3.20	0.0	3.57	0	0	0	0	1	[AJ]Rate expression obtained from recommendation of Aguilera-Iparraguirre et al., 2008 for HO2 + alkanes using the R12 method.
+//546.	ROOH_pri		C_rad/H2/Cs			500-1000	1.00e+11	0.0		0.0	4.7		0	0	0	0	1	[AJ]Pfaendtner and Broadbelt, ChemPhysChem, DOI: 10.1002/cphc.200700161
+//547.	ROOH_sec		C_rad/H2/Cs			500-1000	1.67e+01	3.20	0.0	3.57	0	0	0	0	1	[AJ]Rate expression obtained from recommendation of Aguilera-Iparraguirre et al., 2008 for HO2 + alkanes using the R12 method.
