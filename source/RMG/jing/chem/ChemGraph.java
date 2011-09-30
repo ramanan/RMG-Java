@@ -124,6 +124,13 @@ public class ChemGraph implements Matchable {
         graph = p_graph;
        // isAromatic = isAromatic();
 
+        double numC = getCarbonNumber();
+        double numO = getOxygenNumber();
+        double numH = getHydrogenNumber();
+        if (numC == 0 && numO == 2 && numH == 0){
+            return;
+        }
+
         if (isForbiddenStructure(p_graph,getRadicalNumber(),getOxygenNumber(),getCarbonNumber()) || getRadicalNumber() > MAX_RADICAL_NUM || getOxygenNumber() > MAX_OXYGEN_NUM || getCycleNumber() > MAX_CYCLE_NUM) {
 		//if (getRadicalNumber() > MAX_RADICAL_NUM || getOxygenNumber() > MAX_OXYGEN_NUM || getCycleNumber() > MAX_CYCLE_NUM) {		        
 			String message = "The molecular structure\n"+ p_graph.toString() + " is forbidden by "+whichForbiddenStructures(p_graph, getRadicalNumber(), getOxygenNumber(), getCycleNumber()) +"and not allowed.";
@@ -2126,7 +2133,7 @@ return sn;
 			}
 		}
 		return false;*/
-        
+
         for (Iterator iter = forbiddenStructure.iterator(); iter.hasNext(); ) {
         	FunctionalGroup fg = (FunctionalGroup)iter.next();
         	if (radNumber >= fg.rad_count && oNumber >= fg.O_count && cNumber >= fg.C_count) {
@@ -2467,8 +2474,18 @@ return sn;
         // check if the valency of every atom is satuated
         //if (!valencyOk()) return false;
 
-        // check if the radical number greater than MAX_RADICAL_NUM
+        double numC = getCarbonNumber();
+        double numO = getOxygenNumber();
+        double numH = getHydrogenNumber();
+
+
         if (getRadicalNumber() > MAX_RADICAL_NUM) {
+            // Oxygen exception added by AJ so that number of radical species can be limited to 1 in oxidation systems. The problem was that
+            // limiting the radical count to 2 would cause RMG to refuse to accept O2 as a valid reactant.
+            if (numC == 0 && numH == 0 && numO == 2){
+                setRepOkString("The following chemgraph exceeds the maximum radicals allowed in a species but we are making an exception for oxygen " + this.toString());
+                return true;
+            }
         	setRepOkString("The following chemgraph exceeds the maximum radicals allowed in a species: " + this.toString());
         	return false;
         }
