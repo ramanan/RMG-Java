@@ -90,7 +90,8 @@
     <echo>versionhash = "${versionhash}"</echo>
   </target>
   
-  <target name="versioninfo" depends="getHash">
+  <target name="versioninfo">
+  <!-- target name="versioninfo" depends="getHash"-->
     <!-- set the time stamp -->   
     <tstamp>
       <format property="buildtime" pattern="yyyy-MM-dd'T'HH:mm:ss"/>
