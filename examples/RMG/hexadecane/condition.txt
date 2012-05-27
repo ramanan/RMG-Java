@@ -1,0 +1,124 @@
+Database: RMG_database
+
+//MaxCarbonNumberPerSpecies: 
+//MaxOxygenNumberPerSpecies: 
+//MaxRadicalNumberPerSpecies: 
+//MaxSulfurNumberPerSpecies: 
+//MaxSiliconNumberPerSpecies: 
+//MaxHeavyAtomPerSpecies:
+
+PrimaryThermoLibrary:
+Name: GRIMech3.0
+Location: GRI-Mech3.0
+Name: RMG-old
+Location: primaryThermoLibrary
+Name: DFT_QCI_thermo
+Location: DFT_QCI_thermo
+Name: CBS_QB3_1dHR
+Location: CBS_QB3_1dHR
+END
+
+PrimaryTransportLibrary:
+Name: GRIMech3.0
+Location: GRI-Mech3.0
+END
+
+ReadRestart: no
+WriteRestart: no
+
+TemperatureModel: Constant (K) 453
+PressureModel: Constant (atm) 1
+
+EquationOfState: Liquid
+
+Solvation: on octane
+
+Diffusion: on 0.136e-3
+
+InitialStatus:
+
+hex (mol/cm3) 2.98e-3
+1     C     0 {2,S} {13,S}
+2     C     0 {1,S} {3,S}
+3     C     0 {2,S} {4,S}
+4     C     0 {3,S} {5,S}
+5     C     0 {4,S} {6,S}
+6     C     0 {5,S} {7,S}
+7     C     0 {6,S} {8,S}
+8     C     0 {7,S} {9,S}
+9     C     0 {8,S} {10,S}
+10    C     0 {9,S} {11,S}
+11    C     0 {10,S} {12,S}
+12    C     0 {11,S} {14,S}
+13    C     0 {1,S} {15,S}
+14    C     0 {12,S} {16,S}
+15    C     0 {13,S}
+16    C     0 {14,S}
+
+hex-OOH (mol/cm3) 2.00e-6
+1     C     0 {2,S} {13,S} {17,S}
+2     C     0 {1,S} {12,S}
+3     C     0 {4,S} {14,S}
+4     C     0 {3,S} {5,S}
+5     C     0 {4,S} {6,S}
+6     C     0 {5,S} {7,S}
+7     C     0 {6,S} {8,S}
+8     C     0 {7,S} {9,S}
+9     C     0 {8,S} {10,S}
+10    C     0 {9,S} {11,S}
+11    C     0 {10,S} {12,S}
+12    C     0 {2,S} {11,S}
+13    C     0 {1,S} {16,S}
+14    C     0 {3,S} {15,S}
+15    C     0 {14,S}
+16    C     0 {13,S}
+17    O     0 {1,S} {18,S}
+18    O     0 {17,S}
+
+O2 (mol/cm3) 1.102e-5 ConstantConcentration
+1 O 1 {2,S}
+2 O 1 {1,S}
+
+END
+
+InertGas:
+
+END
+
+SpectroscopicDataEstimator: off
+PressureDependence: off
+
+//Set tolerance appropriately
+FinishController:
+(1) Goal ReactionTime: 3600 (sec)
+(2) Error Tolerance: 0.5
+
+DynamicSimulator: DASSL
+TimeStep: AUTO
+//TerminationTolerance: 1e20
+//PruningTolerance: 1.0E-18
+//MinSpeciesForPruning: 5000
+//MaxEdgeSpeciesAfterPruning: 5000
+Atol: 1e-18
+Rtol: 1e-8
+
+//Error bars: off
+//Display sensitivity coefficients: off
+//Display sensitivity information:
+//END
+
+PrimaryKineticLibrary:
+
+END
+
+ReactionLibrary:
+
+END
+
+SeedMechanism:
+
+END
+
+ChemkinUnits:
+A: moles
+Ea: kcal/mol
