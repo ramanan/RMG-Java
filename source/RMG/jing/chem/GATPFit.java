@@ -49,6 +49,9 @@ import jing.rxnSys.Logger;
  */
 public class GATPFit {
 
+    private static int callCount=0; 
+    private static double callTime=0.0; 
+
 		 //## operation callGATPFit(String)
     private static NASAThermoData callGATPFit(Species species, String p_directory) {
         //#[ operation callGATPFit(String)
@@ -246,8 +249,13 @@ public class GATPFit {
         String dir = System.getProperty("RMG.workingDirectory");
         NASAThermoData nasaThermoData = null;
         try {
+          long startTime=System.nanoTime();
         	// prepare GATPFit input file and execute system call
             nasaThermoData = callGATPFit(species, dir);
+          long endTime=System.nanoTime();
+          callCount++; 
+          callTime+=1e-9*(endTime-startTime); 
+          Logger.info(String.format("GATP calls: %d time: %.3f sec", callCount, callTime)); 
         }
         catch (GATPFitException e) {
         	throw new NASAFittingException("Error in running GATPFit: " + e.toString());
