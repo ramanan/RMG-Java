@@ -2734,7 +2734,7 @@ public class ReactionModelGenerator {
     		bw.newLine();
     		bw.write("NumberOfChebyPress: " + numChebyPress);
     		bw.newLine();
-    		bw.write("NumberOfPLogs: Could be different for seed and library reactions, but default for FAME-generated rates is probably "+ numPlog);
+    		bw.write("NumberOfPLogs: "+ numPlog);
     		bw.newLine();
     		bw.newLine();
     		
