@@ -176,11 +176,14 @@ public class ChebyshevPolynomials implements PDepKinetics {
         
         double Tavg = calculateTAvg(p_temperature);
         double Pavg = calculatePAvg(p_pressure);
+        double acosTavg = Math.acos(Tavg); 
+        double acosPavg = Math.acos(Pavg); 
         
         double result = 0;
         for (int i = 0; i < NT; i++) {
         	for (int j = 0; j < NP; j++) {
-        		result += alpha[i][j]*calculatePhi(i+1, Tavg)*calculatePhi(j+1,Pavg);
+        		//result += alpha[i][j]*calculatePhi(i+1, Tavg)*calculatePhi(j+1,Pavg);
+        		result += alpha[i][j]*Math.cos(i*acosTavg)*Math.cos(j*acosPavg);
         	}
         }
         
