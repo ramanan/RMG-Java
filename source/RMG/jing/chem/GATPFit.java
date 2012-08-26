@@ -274,13 +274,7 @@ public class GATPFit {
         String dir = System.getProperty("RMG.workingDirectory");
         NASAThermoData nasaThermoData = null;
         try {
-          long startTime=System.nanoTime();
-        	// prepare GATPFit input file and execute system call
             nasaThermoData = callGATPFit(species, dir);
-          long endTime=System.nanoTime();
-          callCount++; 
-          callTime+=1e-9*(endTime-startTime); 
-          Logger.info(String.format("GATP calls: %d time: %.3f sec", callCount, callTime)); 
         }
         catch (GATPFitException e) {
         	throw new NASAFittingException("Error in running GATPFit: " + e.toString());
