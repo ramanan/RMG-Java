@@ -1981,10 +1981,11 @@ public class Graph {
     //## operation resetMatchedGC()
     public void resetMatchedGC() {
         //#[ operation resetMatchedGC()
-        Iterator iter1 = getArcList();
-        while (iter1.hasNext()) {
-        	((GraphComponent)iter1.next()).setMatchedGC(null);
-        }
+        //Iterator iter1 = getArcList();
+        int listSize=arcList.size(); 
+        for(int i=0; i<listSize; i++){
+            ((GraphComponent)arcList.get(i)).setMatchedGC(null);
+            }
         Iterator iter2 = getNodeList();
         while (iter2.hasNext()) {
         	((GraphComponent)iter2.next()).setMatchedGC(null);
