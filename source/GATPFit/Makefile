@@ -82,7 +82,7 @@ endif ###### END OF gfortran SETTINGS
 
 LDFLAGS=$(F90_EXTRA_LDFLAGS)
 
-LIBS=-lblas -llapack
+LIBS=-llapack -lblas
 # if you built ATLAS you'll want this instead: 
 # LIBS=-latlas -lptf77blas -lptcblas -llapack
 
