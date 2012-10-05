@@ -1,0 +1,174 @@
+// Tracks the thermal cracking of bio-oil surrogate
+
+
+Database: RMG_database
+
+//MaxCarbonNumberPerSpecies: 
+//MaxOxygenNumberPerSpecies: 
+//MaxRadicalNumberPerSpecies: 
+//MaxSulfurNumberPerSpecies: 
+//MaxSiliconNumberPerSpecies: 
+//MaxHeavyAtomPerSpecies:
+
+PrimaryThermoLibrary:
+Name: DFT_QCI_thermo
+Location: DFT_QCI_thermo
+Name: GRIMech3.0
+Location: GRI-Mech3.0
+Name: RMG-minimal
+Location: primaryThermoLibrary
+END
+
+PrimaryTransportLibrary:
+Name: GRIMech3.0
+Location: GRI-Mech3.0
+END
+
+ReadRestart: no
+WriteRestart: yes
+
+TemperatureModel: Constant (K) 500 1000 1500 2000
+PressureModel: Constant (atm) 0.5 10 40
+
+InitialStatus:
+
+Hyad (mol/cm3) .0041
+1     C     0 {2,S} {3,S}
+2     C     0 {1,S} {4,D}
+3     O     0 {1,S}
+4     O     0 {2,D} 
+
+Aa (mol/cm3) .00181
+1     C     0 {2,S}
+2     C     0 {1,S} {3,S} {4,D}
+3     O     0 {2,S}
+4     O     0 {2,D}
+
+Hypp (mol/cm3) .00233
+1     C     0 {3,S} {4,S}
+2     C     0 {3,S}
+3     C     0 {1,S} {2,S} {5,D}
+4     O     0 {1,S}
+5     O     0 {3,D} 
+
+Lvgs (mol/cm3) .00024
+1     C     0 {2,S} {6,S} {7,S}
+2     C     0 {1,S} {3,S} {10,S}
+3     C     0 {2,S} {4,S} {11,S}
+4     C     0 {3,S} {5,S} {9,S}
+5     C     0 {4,S} {7,S} {8,S}
+6     C     0 {1,S} {8,S}
+7     O     0 {1,S} {5,S}
+8     O     0 {5,S} {6,S}
+9     O     0 {4,S}
+10    O     0 {2,S}
+11    O     0 {3,S}
+
+
+Ppa (mol/cm3) .000194
+1     C     0 {2,S} {3,S}
+2     C     0 {1,S}
+3     C     0 {1,S} {4,S} {5,D}
+4     O     0 {3,S}
+5     O     0 {3,D}
+ 
+
+Hf2o (mol/cm3) .00032
+1     C     0 {2,S} {5,S}
+2     C     0 {1,S} {3,D}
+3     C     0 {2,D} {4,S}
+4     C     0 {3,S} {5,S} {6,D}
+5     O     0 {1,S} {4,S}
+6     O     0 {4,D}
+ 
+
+Isegl (mol/cm3) .00075
+1     C     0 {6,S}
+2     C     0 {11,S}
+3     C     0 {7,B} {8,S} {9,B}
+4     C     0 {5,B} {7,B} {11,S}
+5     C     0 {4,B} {10,B} {12,S}
+6     C     0 {1,S} {8,D}
+7     C     0 {3,B} {4,B}
+8     C     0 {3,S} {6,D}
+9     C     0 {3,B} {10,B}
+10    C     0 {5,B} {9,B}
+11    O     0 {2,S} {4,S}
+12    O     0 {5,S}
+ 
+
+Phl (mol/cm3) .0000452
+1     C     0 {2,B} {3,B} {7,S}
+2     C     0 {1,B} {4,B}
+3     C     0 {1,B} {6,B}
+4     C     0 {2,B} {5,B}
+5     C     0 {4,B} {6,B}
+6     C     0 {3,B} {5,B}
+7     O     0 {1,S}
+
+Sygl (mol/cm3) .00004
+1     C     0 {9,S}
+2     C     0 {10,S}
+3     C     0 {5,B} {6,B} {9,S}
+4     C     0 {5,B} {7,B} {10,S}
+5     C     0 {3,B} {4,B} {11,S}
+6     C     0 {3,B} {8,B}
+7     C     0 {4,B} {8,B}
+8     C     0 {6,B} {7,B}
+9     O     0 {1,S} {3,S}
+10    O     0 {2,S} {4,S}
+11    O     0 {5,S}
+
+
+H2O (mol/cm3) 0.0134
+1     O     0
+
+
+
+END
+
+InertGas:
+N2 (mol/cm3) 0.003
+END
+
+SpectroscopicDataEstimator: off
+PressureDependence: off
+
+
+
+FinishController:
+(1) Goal ReactionTime: 30 (sec)
+(2) Error Tolerance: 0.5
+
+DynamicSimulator: DASSL
+TimeStep: AUTO
+
+Atol: 1e-18
+Rtol: 1e-8
+
+PrimaryKineticLibrary:
+//Name: RMG-example
+//Location: Example
+END
+
+ReactionLibrary:
+Name: Methylformate
+Location: Methylformate
+Name: GlarborgHighP
+Location: Glarborg/highP
+END
+
+
+SeedMechanism:
+Name: GlarborgC2
+Location: Glarborg/C1
+GenerateReactions: yes
+//Name: GRIMech3.0
+//Location: GRI-Mech3.0
+//GenerateReactions: yes
+END
+
+ChemkinUnits:
+Verbose: on
+A: moles
+Ea: kcal/mol
