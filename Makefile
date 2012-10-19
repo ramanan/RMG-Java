@@ -141,7 +141,7 @@ clean:
 	ant clean
 	rm -rf $(BUILDDIR)
 	rm -rf $(BINDIR)
-	rm -rf $(RUNDIR)
+	#rm -rf $(RUNDIR)
 
 # Run a test case
 test:
